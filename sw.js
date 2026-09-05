@@ -1,5 +1,5 @@
-// CORTEX Service Worker — Network-First strategy (always fresh updates, offline fallback)
-const CACHE_NAME = 'cortex-cache-v1';
+// CORTEX Service Worker – Network-First strategy (always fresh updates, offline fallback)
+const CACHE_NAME = 'cortex-cache-v2';
 
 const ASSETS = [
   './',
