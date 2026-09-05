@@ -2251,101 +2251,97 @@ select.form-input:hover {
   box-shadow: none !important;
 }
 
-/* GitHub Modal Footer */
-.github-modal-footer {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
-  padding: 16px 22px !important;
-  border-top: 1px solid var(--border-subtle) !important;
-  margin-top: 0 !important;
-  background: var(--bg-card-solid);
-  flex-shrink: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
+/* GitHub Modal Footer & Dialog */
 .storage-dialog {
   width: 95%;
-  max-width: 620px !important;
+  max-width: 640px !important;
 }
 
 .github-modal-footer {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  padding: 14px 22px !important;
-  background: var(--bg-card-solid) !important;
-  border-top: 1px solid var(--border-subtle) !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-}
-
-.github-footer-status-row {
-  display: flex !important;
+  flex-direction: row !important;
   align-items: center !important;
   justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 14px 18px !important;
+  border-top: 1px solid var(--border-subtle) !important;
+  margin-top: 0 !important;
+  background: var(--bg-card-solid) !important;
+  flex-shrink: 0 !important;
   width: 100% !important;
-  min-height: 28px !important;
+  box-sizing: border-box !important;
 }
 
 .storage-auto-save-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.84rem;
-  color: #79c991;
-  font-weight: 500;
-  user-select: none;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 0.82rem !important;
+  color: #79c991 !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  user-select: none !important;
+}
+
+.storage-auto-save-badge svg {
+  flex-shrink: 0 !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 
 .github-footer-actions {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: flex-end !important;
-  gap: 10px !important;
-  flex-wrap: wrap !important;
-  width: 100% !important;
-  margin-left: 0 !important;
+  gap: 8px !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
 }
 
 .github-modal-footer .btn {
-  height: 38px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
-  line-height: 38px !important;
-  padding: 0 14px !important;
-  font-size: 0.86rem !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  line-height: 36px !important;
+  min-width: 0 !important;
+  padding: 0 12px !important;
+  font-size: 0.83rem !important;
   font-weight: 600 !important;
   white-space: nowrap !important;
   border-radius: var(--radius-md) !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
 }
 
 .github-modal-footer .btn[style*="display: none"] {
   display: none !important;
 }
 
-.github-modal-footer #ghDisconnectBtn {
-  height: 30px !important;
-  min-height: 30px !important;
-  max-height: 30px !important;
-  line-height: 30px !important;
-  padding: 0 10px !important;
+.github-status-card #ghDisconnectBtn {
+  height: 32px !important;
+  min-height: 32px !important;
+  line-height: 32px !important;
+  padding: 0 12px !important;
   font-size: 0.8rem !important;
   background: rgba(239, 68, 68, 0.1) !important;
   border: 1px solid rgba(239, 68, 68, 0.25) !important;
   color: #f87171 !important;
   border-radius: var(--radius-sm) !important;
-  margin-left: auto;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  transition: var(--transition) !important;
 }
 
-.github-modal-footer #ghDisconnectBtn:hover {
-  background: rgba(239, 68, 68, 0.18) !important;
+.github-status-card #ghDisconnectBtn:hover {
+  background: rgba(239, 68, 68, 0.22) !important;
   border-color: #ef4444 !important;
   color: #ffffff !important;
 }
@@ -2361,22 +2357,24 @@ select.form-input:hover {
   border-color: var(--border-color) !important;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 560px) {
   .github-modal-footer {
-    padding: 12px 14px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     gap: 10px !important;
+    padding: 12px 14px !important;
   }
-  .github-footer-status-row {
-    flex-wrap: wrap !important;
-    gap: 6px !important;
+  .storage-auto-save-badge {
+    justify-content: center !important;
   }
   .github-footer-actions {
     display: flex !important;
+    width: 100% !important;
     gap: 8px !important;
   }
   .github-footer-actions .btn {
     flex: 1 1 auto !important;
-    min-width: 90px !important;
+    min-width: 70px !important;
     padding: 0 8px !important;
     font-size: 0.8rem !important;
   }

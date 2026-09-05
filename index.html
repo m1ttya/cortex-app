@@ -690,7 +690,7 @@
 
   <!-- Модальное окно: Выбор и настройка хранилища базы данных (GitHub или Локально) -->
   <div class="modal-backdrop" id="storageModalBackdrop">
-    <div class="modal-dialog storage-dialog" style="max-width: 620px;">
+    <div class="modal-dialog storage-dialog" style="max-width: 640px;">
       <div class="modal-header">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
           <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
@@ -724,6 +724,10 @@
               <div class="github-status-title" id="githubStatusTitle">Не подключено</div>
               <div class="github-status-desc" id="githubStatusDesc">Синхронизируйте базу cortex_db.json с вашим личным репозиторием на GitHub. Изменения сохраняются автоматически.</div>
             </div>
+            <button type="button" class="btn btn-secondary btn-sm text-danger" id="ghDisconnectBtn" style="display: none; margin-left: auto; flex-shrink: 0;" title="Отключить синхронизацию с этим репозиторием">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+              <span>Отключить</span>
+            </button>
           </div>
 
           <form id="githubConfigForm" onsubmit="event.preventDefault();">
@@ -837,15 +841,9 @@
       </div>
 
       <div class="modal-footer github-modal-footer">
-        <div class="github-footer-status-row">
-          <div class="storage-auto-save-badge">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#79c991" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            <span>Автосохранение включено</span>
-          </div>
-          <button type="button" class="btn btn-secondary btn-sm text-danger" id="ghDisconnectBtn" style="display: none;">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
-            <span>Отключить</span>
-          </button>
+        <div class="storage-auto-save-badge">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#79c991" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Автосохранение включено</span>
         </div>
         <div class="github-footer-actions">
           <button type="button" class="btn btn-secondary btn-sm" id="ghSyncNowBtn" style="display: none;">

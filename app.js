@@ -1307,7 +1307,7 @@ const githubSync = {
 
     if (disconnectBtn) disconnectBtn.style.display = 'inline-flex';
     if (syncNowBtn) syncNowBtn.style.display = 'inline-flex';
-    if (connectBtn) connectBtn.textContent = 'Обновить настройки';
+    if (connectBtn) connectBtn.textContent = 'Обновить';
 
     const repoName = cfg.repo || '';
     const branch = cfg.branch || 'main';
