@@ -24,6 +24,16 @@
           "name": "Коммерсантъ",
           "url": "https://www.kommersant.ru",
           "type": "rss"
+        },
+        {
+          "name": "ТАСС",
+          "url": "https://tass.ru",
+          "type": "rss"
+        },
+        {
+          "name": "Ведомости",
+          "url": "https://www.vedomosti.ru",
+          "type": "rss"
         }
       ]
     },
@@ -70,7 +80,7 @@
         },
         {
           "name": "Telegram Info",
-          "url": "https://t.me/tginfo",
+          "url": "https://t.me/tginfo/4112",
           "type": "telegram"
         }
       ]
@@ -237,12 +247,12 @@
       "sources": [
         {
           "name": "Durov's Channel",
-          "url": "https://t.me/durov",
+          "url": "https://t.me/durov/342",
           "type": "telegram"
         },
         {
           "name": "Telegram Info",
-          "url": "https://t.me/tginfo",
+          "url": "https://t.me/tginfo/4118",
           "type": "telegram"
         }
       ]
@@ -261,7 +271,7 @@
       "sources": [
         {
           "name": "Telegram Info",
-          "url": "https://t.me/tginfo",
+          "url": "https://t.me/tginfo/4115",
           "type": "telegram"
         }
       ]

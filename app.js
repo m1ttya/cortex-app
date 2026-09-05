@@ -11,7 +11,7 @@ const IDB_STORE = 'handles';
 const IDB_KEY = 'cortex_db_file_handle';
 const LAST_DB_INFO_KEY = 'cortex_last_db_info_v1';
 const GITHUB_CONFIG_KEY = 'cortex_github_sync_config_v1';
-const NEWS_DIGEST_KEY = 'cortex_news_digest_v2';
+const NEWS_DIGEST_KEY = 'cortex_news_digest_v4';
 const NEWS_SOURCES_KEY = 'cortex_news_sources_v1';
 const LLM_CONFIG_KEY = 'cortex_llm_config_v1';
 
@@ -2145,8 +2145,18 @@ const newsManager = {
         ? item.sources.map(src => {
             const isTg = src.type === 'telegram';
             const iconHtml = isTg ? tgIconSvg : '📰 ';
-            return `<a href="${escapeHtml(src.url)}" target="_blank" rel="noopener noreferrer" class="news-source-chip" title="Открыть первоисточник: ${escapeHtml(src.name)}">
-              <span>${iconHtml}${escapeHtml(src.name)}</span>
+            let targetUrl = src.url || '#';
+            if (isTg && !targetUrl.startsWith('http')) {
+              targetUrl = `https://t.me/${targetUrl.replace('@', '')}`;
+            }
+            const postMatch = targetUrl.match(/t\.me\/[^/]+\/(\d+)/);
+            const postLabel = postMatch ? ` #${postMatch[1]}` : '';
+            const tooltipTitle = postMatch
+              ? `Открыть пост #${postMatch[1]} в Telegram-канале ${escapeHtml(src.name)}`
+              : `Открыть первоисточник: ${escapeHtml(src.name)}`;
+
+            return `<a href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener noreferrer" class="news-source-chip" title="${tooltipTitle}">
+              <span>${iconHtml}${escapeHtml(src.name)}${postLabel ? `<span class="source-post-num">${postLabel}</span>` : ''}</span>
               <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
             </a>`;
           }).join('')
@@ -2166,10 +2176,12 @@ const newsManager = {
             <div class="news-sources-group">
               ${sourcesHtml}
             </div>
-            <button type="button" class="btn-save-to-brain" onclick="newsManager.saveToBrain('${escapeHtml(item.id)}')" title="Сохранить эту выжимку в личную базу знаний">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              <span>В базу знаний</span>
-            </button>
+            <div class="news-card-actions">
+              <button type="button" class="btn-save-to-brain" onclick="newsManager.saveToBrain('${escapeHtml(item.id)}')" title="Сохранить эту выжимку в личную базу знаний">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>В базу знаний</span>
+              </button>
+            </div>
           </div>
         </article>
       `;

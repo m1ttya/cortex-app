@@ -4206,13 +4206,11 @@ select.form-input:hover {
 
 .news-card-footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   padding-top: 14px;
   border-top: 1px solid var(--border-subtle);
   margin-top: auto;
-  flex-wrap: wrap;
 }
 
 .news-sources-group {
@@ -4220,6 +4218,7 @@ select.form-input:hover {
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  min-height: 28px;
 }
 
 .news-source-chip {
@@ -4241,6 +4240,19 @@ select.form-input:hover {
   background: var(--accent-warm-soft);
   color: var(--accent-warm);
   border-color: var(--border-accent);
+}
+
+.source-post-num {
+  opacity: 0.75;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.news-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .btn-save-to-brain {
