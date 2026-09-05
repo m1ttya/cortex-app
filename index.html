@@ -64,69 +64,16 @@
 
       <!-- Действия шапки (тема, диск, экспорт/импорт) -->
       <div class="header-actions">
-        <!-- Кнопка привязки и статуса локального файла на диске -->
-        <button class="btn btn-secondary btn-sm storage-sync-btn" id="storageSyncBtn" title="Нажмите, чтобы выбрать или сменить файл базы">
-          <span class="storage-sync-dot" id="storageSyncDot"></span>
-          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
-          <span id="storageSyncText">База: cortex_db.json</span>
+        <!-- Единая кнопка выбора и статуса базы данных (GitHub или Локально) -->
+        <button class="btn btn-secondary btn-sm storage-hub-btn" id="storageHubBtn" title="Настройки базы данных и синхронизации">
+          <span class="storage-hub-dot" id="storageHubDot"></span>
+          <span class="storage-hub-icon" id="storageHubIcon">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
+          </span>
+          <span id="storageHubText">База данных</span>
         </button>
         <input type="file" id="fallbackDiskFileInput" accept=".json" style="display:none">
-
-        <!-- Кнопка ручного сохранения базы в файл -->
-        <button class="btn btn-secondary btn-sm save-manual-btn" id="manualSaveBtn" title="Сохранить базу в файл (Ctrl+S)">
-          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
-          <span id="manualSaveBtnText">Сохранить</span>
-          <span class="save-status-dot"></span>
-        </button>
-
-        <!-- Кнопка и статус GitHub синхронизации -->
-        <button class="btn btn-secondary btn-sm github-sync-header-btn" id="githubSyncHeaderBtn" title="Синхронизация с GitHub (нажмите для настройки)">
-          <span class="github-sync-dot" id="githubSyncHeaderDot"></span>
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          <span id="githubSyncHeaderText">GitHub</span>
-        </button>
-
-        <!-- Меню работы с данными и базой -->
-        <div class="dropdown-container">
-          <button class="btn btn-secondary btn-sm" id="dataMenuBtn" title="Резервное копирование и данные">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-            <span>Данные</span>
-          </button>
-          <div class="dropdown-menu" id="dataMenu">
-            <button type="button" class="dropdown-item" id="createNewDbBtn">
-              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/2795.png" class="apple-emoji apple-emoji-sm" alt="➕">
-              <span>Создать новую базу</span>
-            </button>
-            <button type="button" class="dropdown-item" id="linkDiskFileBtn">
-              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
-              <span>Выбрать существующую базу</span>
-            </button>
-            <button type="button" class="dropdown-item" id="downloadDbBtn">
-              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
-              <span>Скачать cortex_db.json</span>
-            </button>
-            <div class="dropdown-divider"></div>
-            <button type="button" class="dropdown-item" id="githubSyncMenuBtn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="flex-shrink: 0;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              <span>Синхронизация с GitHub</span>
-            </button>
-            <div class="dropdown-divider"></div>
-            <button type="button" class="dropdown-item" id="exportDataBtn">
-              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4e5.png" class="apple-emoji apple-emoji-sm" alt="📥">
-              <span>Экспорт резервной копии</span>
-            </button>
-            <button type="button" class="dropdown-item" id="importJsonBtn">
-              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4e4.png" class="apple-emoji apple-emoji-sm" alt="📤">
-              <span>Импорт из JSON</span>
-            </button>
-            <input type="file" id="importFileInput" accept=".json" style="display: none;">
-            <div class="dropdown-divider"></div>
-            <button type="button" class="dropdown-item text-danger" id="clearAllBtn">
-              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f5d1-fe0f.png" class="apple-emoji apple-emoji-sm" alt="🗑️">
-              <span>Очистить все материалы</span>
-            </button>
-          </div>
-        </div>
+        <input type="file" id="importFileInput" accept=".json" style="display:none">
 
         <!-- Разделитель между базой данных и визуальной темой -->
         <div class="header-actions-divider"></div>
@@ -737,87 +684,171 @@
     </div>
   </div>
 
-  <!-- Модальное окно: Синхронизация с GitHub -->
-  <div class="modal-backdrop" id="githubModalBackdrop">
-    <div class="modal-dialog github-dialog" style="max-width: 560px;">
+  <!-- Модальное окно: Выбор и настройка хранилища базы данных (GitHub или Локально) -->
+  <div class="modal-backdrop" id="storageModalBackdrop">
+    <div class="modal-dialog storage-dialog" style="max-width: 580px;">
       <div class="modal-header">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          Синхронизация с GitHub
+          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
+          Хранилище базы данных
         </h3>
-        <button type="button" class="modal-close-btn" id="closeGithubModalBtn">&times;</button>
+        <button type="button" class="modal-close-btn" id="closeStorageModalBtn">&times;</button>
       </div>
       <div class="modal-body" style="line-height: 1.5; font-size: 0.92rem;">
-        <!-- Баннер статуса -->
-        <div class="github-status-card" id="githubStatusCard">
-          <div class="github-status-indicator" id="githubStatusDot"></div>
-          <div class="github-status-info">
-            <div class="github-status-title" id="githubStatusTitle">Не подключено</div>
-            <div class="github-status-desc" id="githubStatusDesc">Синхронизируйте базу cortex_db.json с вашим личным репозиторием на GitHub</div>
+        <!-- Переключатель режима: Через GitHub или Локально на диске -->
+        <div class="storage-mode-tabs" role="tablist">
+          <button type="button" class="storage-tab-btn active" id="tabBtnGithub" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <span>Через GitHub</span>
+            <span class="storage-tab-status-dot" id="tabGithubActiveDot"></span>
+          </button>
+          <button type="button" class="storage-tab-btn" id="tabBtnDisk" role="tab" aria-selected="false">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
+            <span>Локальный диск</span>
+            <span class="storage-tab-status-dot" id="tabDiskActiveDot"></span>
+          </button>
+        </div>
+
+        <!-- ВКЛАДКА 1: ЧЕРЕЗ GITHUB -->
+        <div class="storage-tab-pane active" id="tabPaneGithub" role="tabpanel">
+          <!-- Баннер статуса GitHub -->
+          <div class="github-status-card" id="githubStatusCard">
+            <div class="github-status-indicator" id="githubStatusDot"></div>
+            <div class="github-status-info">
+              <div class="github-status-title" id="githubStatusTitle">Не подключено</div>
+              <div class="github-status-desc" id="githubStatusDesc">Синхронизируйте базу cortex_db.json с вашим личным репозиторием на GitHub. Изменения сохраняются автоматически.</div>
+            </div>
+          </div>
+
+          <form id="githubConfigForm" onsubmit="event.preventDefault();">
+            <!-- Токен -->
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label for="ghTokenInput" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>GitHub Personal Access Token:</span>
+                <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" class="link-hint">Создать токен ↗</a>
+              </label>
+              <div class="password-input-wrapper">
+                <input type="password" id="ghTokenInput" class="form-input" placeholder="github_pat_... или ghp_..." autocomplete="off">
+                <button type="button" class="btn-toggle-password" id="ghToggleTokenBtn" title="Показать/скрыть токен">👁️</button>
+              </div>
+            </div>
+
+            <!-- Репозиторий -->
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label for="ghRepoInput" class="form-label">Репозиторий (username/repo):</label>
+              <input type="text" id="ghRepoInput" class="form-input" placeholder="например: alex/cortex-brain" autocomplete="off">
+            </div>
+
+            <!-- Ветка и путь к файлу -->
+            <div class="github-inputs-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+              <div class="form-group">
+                <label for="ghBranchInput" class="form-label">Ветка:</label>
+                <input type="text" id="ghBranchInput" class="form-input" value="main" placeholder="main">
+              </div>
+              <div class="form-group">
+                <label for="ghPathInput" class="form-label">Файл в репозитории:</label>
+                <input type="text" id="ghPathInput" class="form-input" value="cortex_db.json" placeholder="cortex_db.json">
+              </div>
+            </div>
+
+            <!-- Инструкция -->
+            <details class="github-instructions-details">
+              <summary>Инструкция: как создать токен за 1 минуту (бесплатно)</summary>
+              <div class="github-instructions-content">
+                <ol style="padding-left: 18px; margin: 8px 0; font-size: 0.83rem; color: var(--text-secondary); line-height: 1.55;">
+                  <li>Создайте репозиторий на GitHub (можно <strong>Private</strong>), например <code>cortex-data</code>.</li>
+                  <li>Перейдите в <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" style="color: var(--accent-warm); text-decoration: underline;">GitHub ➔ Settings ➔ Personal Access Tokens</a>.</li>
+                  <li>Нажмите <strong>Generate new token</strong>, выберите репозиторий <code>cortex-data</code>.</li>
+                  <li>В блоке <strong>Repository permissions</strong> выберите <strong>Contents: Read and write</strong>.</li>
+                  <li>Скопируйте полученный токен и вставьте в поле выше.</li>
+                </ol>
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                  🔒 <em>Токен сохраняется только в браузере (LocalStorage) и отправляется исключительно на официальный api.github.com по HTTPS.</em>
+                </div>
+              </div>
+            </details>
+          </form>
+        </div>
+
+        <!-- ВКЛАДКА 2: ЛОКАЛЬНО НА ДИСКЕ -->
+        <div class="storage-tab-pane" id="tabPaneDisk" style="display: none;" role="tabpanel">
+          <!-- Баннер статуса диска -->
+          <div class="github-status-card disk-status-card" id="diskStatusCard">
+            <div class="github-status-indicator" id="diskStatusDot"></div>
+            <div class="github-status-info">
+              <div class="github-status-title" id="diskStatusTitle">Файл на диске не выбран</div>
+              <div class="github-status-desc" id="diskStatusDesc">Выберите файл cortex_db.json или создайте новый. Все изменения автоматически записываются на диск.</div>
+            </div>
+          </div>
+
+          <!-- Действия с локальным файлом -->
+          <div class="disk-actions-group" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <button type="button" class="btn btn-secondary" id="diskChooseFileBtn" style="justify-content: center; height: 42px;">
+                <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
+                <span>Выбрать файл на диске</span>
+              </button>
+              <button type="button" class="btn btn-secondary" id="diskCreateFileBtn" style="justify-content: center; height: 42px;">
+                <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/2795.png" class="apple-emoji apple-emoji-sm" alt="➕">
+                <span>Создать новую базу</span>
+              </button>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
+              <button type="button" class="btn btn-secondary btn-sm text-danger" id="diskDisconnectBtn" style="display: none;">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                <span>Отключить файл на диске</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Пояснение про File System Access API -->
+          <div class="disk-info-note" style="margin-top: 10px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px 14px;">
+            💡 <strong>100% автономно:</strong> Работа с физическим файлом на диске через стандартный <em>File System Access API</em> (Chrome, Edge). Добавление, редактирование и удаление материалов сохраняются сразу в файл без всплывающих окон.
           </div>
         </div>
 
-        <form id="githubConfigForm" onsubmit="event.preventDefault();">
-          <!-- Токен -->
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label for="ghTokenInput" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
-              <span>GitHub Personal Access Token:</span>
-              <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" class="link-hint">Создать токен ↗</a>
-            </label>
-            <div class="password-input-wrapper">
-              <input type="password" id="ghTokenInput" class="form-input" placeholder="github_pat_... или ghp_..." autocomplete="off">
-              <button type="button" class="btn-toggle-password" id="ghToggleTokenBtn" title="Показать/скрыть токен">👁️</button>
-            </div>
+        <!-- БЛОК: Резервная копия и экспорт -->
+        <details class="github-instructions-details storage-backup-details" style="margin-top: 14px;">
+          <summary style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); cursor: pointer;">
+            📦 Резервная копия, экспорт и сброс
+          </summary>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+            <button type="button" class="btn btn-secondary btn-sm" id="storageDownloadJsonBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
+              <span>Скачать cortex_db.json</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="storageImportJsonBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4e4.png" class="apple-emoji apple-emoji-sm" alt="📤">
+              <span>Импорт из JSON</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm text-danger" id="storageClearAllBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f5d1-fe0f.png" class="apple-emoji apple-emoji-sm" alt="🗑️">
+              <span>Очистить базу</span>
+            </button>
           </div>
-
-          <!-- Репозиторий -->
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label for="ghRepoInput" class="form-label">Репозиторий (username/repo):</label>
-            <input type="text" id="ghRepoInput" class="form-input" placeholder="например: alex/cortex-brain" autocomplete="off">
-          </div>
-
-          <!-- Ветка и путь к файлу -->
-          <div class="github-inputs-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
-            <div class="form-group">
-              <label for="ghBranchInput" class="form-label">Ветка:</label>
-              <input type="text" id="ghBranchInput" class="form-input" value="main" placeholder="main">
-            </div>
-            <div class="form-group">
-              <label for="ghPathInput" class="form-label">Файл в репозитории:</label>
-              <input type="text" id="ghPathInput" class="form-input" value="cortex_db.json" placeholder="cortex_db.json">
-            </div>
-          </div>
-
-          <!-- Инструкция -->
-          <details class="github-instructions-details">
-            <summary>Инструкция: как создать токен за 1 минуту (бесплатно)</summary>
-            <div class="github-instructions-content">
-              <ol style="padding-left: 18px; margin: 8px 0; font-size: 0.83rem; color: var(--text-secondary); line-height: 1.55;">
-                <li>Создайте репозиторий на GitHub (можно <strong>Private</strong>), например <code>cortex-data</code>.</li>
-                <li>Перейдите в <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" style="color: var(--accent-warm); text-decoration: underline;">GitHub ➔ Settings ➔ Personal Access Tokens</a>.</li>
-                <li>Нажмите <strong>Generate new token</strong>, выберите репозиторий <code>cortex-data</code>.</li>
-                <li>В блоке <strong>Repository permissions</strong> выберите <strong>Contents: Read and write</strong>.</li>
-                <li>Скопируйте полученный токен и вставьте в поле выше.</li>
-              </ol>
-              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
-                🔒 <em>Токен сохраняется только в браузере (LocalStorage) и отправляется исключительно на официальный api.github.com по HTTPS.</em>
-              </div>
-            </div>
-          </details>
-        </form>
+        </details>
       </div>
+
       <div class="modal-footer github-modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm text-danger" id="ghDisconnectBtn" style="display: none;">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
-          <span>Отключить</span>
-        </button>
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #79c991; margin-right: auto;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#79c991" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span style="font-weight: 500;">Автосохранение включено</span>
+        </div>
         <div class="github-footer-actions">
+          <button type="button" class="btn btn-secondary btn-sm text-danger" id="ghDisconnectBtn" style="display: none;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+            <span>Отключить</span>
+          </button>
           <button type="button" class="btn btn-secondary btn-sm" id="ghSyncNowBtn" style="display: none;">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
             <span>Синхронизировать</span>
           </button>
           <button type="button" class="btn btn-primary btn-sm" id="ghConnectBtn">
-            <span>Проверить и сохранить</span>
+            <span>Подключить GitHub</span>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="closeStorageModalFooterBtn">
+            <span>Закрыть</span>
           </button>
         </div>
       </div>

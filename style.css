@@ -2261,9 +2261,13 @@ select.form-input:hover {
   font-weight: 600 !important;
   white-space: nowrap !important;
   border-radius: var(--radius-md) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.github-modal-footer .btn[style*="display: none"] {
+  display: none !important;
 }
 
 .github-modal-footer #ghDisconnectBtn {
@@ -2547,8 +2551,128 @@ select.form-input:hover {
 }
 
 /* ==========================================================================
-   Кнопка и статус GitHub синхронизации в шапке
+   Единая кнопка выбора и статуса базы данных в шапке
    ========================================================================== */
+.storage-hub-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.storage-hub-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.storage-hub-dot.connected {
+  background: #79c991;
+  box-shadow: 0 0 8px rgba(121, 201, 145, 0.7);
+}
+
+.storage-hub-dot.syncing {
+  background: #e5a468;
+  box-shadow: 0 0 8px rgba(229, 164, 104, 0.7);
+  animation: pulse-dot 0.9s infinite alternate;
+}
+
+.storage-hub-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Переключатель вкладок режимов в модальном окне базы данных */
+.storage-mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+  background: var(--bg-canvas);
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.storage-tab-btn {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0 10px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.storage-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.storage-tab-btn.active {
+  background: var(--bg-card-solid);
+  color: var(--text-primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-subtle);
+}
+
+.storage-tab-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  margin-left: 2px;
+  transition: background 0.2s ease;
+}
+
+.storage-tab-status-dot.connected {
+  background: #79c991;
+  box-shadow: 0 0 6px rgba(121, 201, 145, 0.8);
+}
+
+.storage-tab-pane {
+  display: none;
+}
+
+.storage-tab-pane.active {
+  display: block;
+  animation: fadeIn 0.18s ease-out;
+}
+
+.storage-backup-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.storage-backup-details summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Старые стили для совместимости */
 .github-sync-header-btn {
   display: inline-flex;
   align-items: center;
@@ -3306,40 +3430,28 @@ select.form-input:hover {
     display: none;
   }
 
-  #storageSyncBtn {
+  #storageHubBtn {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     max-width: none !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     padding: 0 10px !important;
-    font-size: 0.8rem !important;
-  }
-
-  #githubSyncHeaderBtn {
-    flex: 0 1 auto !important;
-    padding: 0 8px !important;
-    font-size: 0.8rem !important;
+    font-size: 0.82rem !important;
   }
 
   .github-inputs-row {
     grid-template-columns: 1fr !important;
   }
 
-  #manualSaveBtn {
-    flex-shrink: 0 !important;
-    padding: 0 10px !important;
-    font-size: 0.8rem !important;
+  .storage-tab-btn {
+    font-size: 0.82rem !important;
+    padding: 0 4px !important;
+    gap: 5px !important;
   }
 
   .dropdown-container {
     flex-shrink: 0 !important;
-  }
-
-  #dataMenuBtn {
-    flex-shrink: 0 !important;
-    padding: 0 10px !important;
-    font-size: 0.8rem !important;
   }
 
   #themeMenuBtn {

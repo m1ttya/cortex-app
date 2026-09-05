@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.githubSync) {
     await githubSync.init();
   }
+  updateStorageHubUI();
   if (window.newsManager) {
     await newsManager.init();
   }
@@ -536,103 +537,33 @@ function getSaveIndicatorHtml(itemId) {
 
 function markUnsaved() {
   state.hasUnsavedChanges = true;
-  const saveBtn = document.getElementById('manualSaveBtn');
-  const saveBtnText = document.getElementById('manualSaveBtnText');
-  if (saveBtn) {
-    saveBtn.classList.remove('saved-success');
-    saveBtn.classList.add('visible');
-  }
-  if (saveBtnText) saveBtnText.textContent = 'Сохранить';
 }
 
 function markSaved(message) {
   state.hasUnsavedChanges = false;
-  const saveBtn = document.getElementById('manualSaveBtn');
-  const saveBtnText = document.getElementById('manualSaveBtnText');
-  if (saveBtn) {
-    saveBtn.classList.remove('visible');
-    saveBtn.classList.add('saved-success');
-    if (saveBtnText) saveBtnText.textContent = 'Сохранено ✓';
-    setTimeout(() => {
-      saveBtn.classList.remove('saved-success');
-      if (saveBtnText) saveBtnText.textContent = 'Сохранить';
-    }, 1500);
-  }
   if (message) showToast(message);
 }
 
 async function manualSaveDatabase() {
-  const saveBtnText = document.getElementById('manualSaveBtnText');
-  if (saveBtnText) saveBtnText.textContent = 'Сохраняем...';
+  await saveData();
+  state.hasUnsavedChanges = false;
+  showToast('База данных сохранена ✓', 'success');
+}
 
-  // 1. Прямая тихая запись в уже открытую базу данных (БЕЗ ВСКРЫТИЯ ДИАЛОГОВЫХ ОКОН!)
-  if (state.fileHandle) {
+async function disconnectDiskFile() {
+  state.fileHandle = null;
+  state.isDiskConnected = false;
+  state.linkedFileName = null;
+  localStorage.removeItem(LAST_DB_INFO_KEY);
+  const db = await openHandleDB();
+  if (db) {
     try {
-      let perm = await state.fileHandle.queryPermission({ mode: 'readwrite' });
-      if (perm !== 'granted') {
-        perm = await state.fileHandle.requestPermission({ mode: 'readwrite' });
-      }
-      if (perm === 'granted') {
-        const writable = await state.fileHandle.createWritable();
-        const payload = {
-          version: '1.0',
-          updatedAt: new Date().toISOString(),
-          tags: state.tags,
-          items: state.items
-        };
-        await writable.write(JSON.stringify(payload, null, 2));
-        await writable.close();
-        state.isDiskConnected = true;
-        updateStorageStatusUI(true, state.fileHandle.name);
-        markSaved(`✨ Записано в файл ${state.fileHandle.name}`);
-        return;
-      }
-    } catch (err) {
-      console.warn('Прямая запись через FileHandle не удалась:', err);
-    }
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(IDB_KEY);
+    } catch {}
   }
-
-  // 2. Если файл базы ещё ни разу не был привязан (новый сеанс):
-  // Открываем диалог выбора ОДИН РАЗ, чтобы связать файл
-  if ('showOpenFilePicker' in window) {
-    try {
-      const [handle] = await window.showOpenFilePicker({
-        types: [{
-          description: 'JSON Database (*.json)',
-          accept: { 'application/json': ['.json'] }
-        }],
-        multiple: false
-      });
-      if (handle) {
-        state.fileHandle = handle;
-        state.linkedFileName = handle.name;
-        state.isDiskConnected = true;
-        await storeFileHandle(handle);
-        const writable = await handle.createWritable();
-        const payload = {
-          version: '1.0',
-          updatedAt: new Date().toISOString(),
-          tags: state.tags,
-          items: state.items
-        };
-        await writable.write(JSON.stringify(payload, null, 2));
-        await writable.close();
-        updateStorageStatusUI(true, handle.name);
-        markSaved(`✨ База ${handle.name} привязана и обновлена!`);
-        return;
-      }
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        if (saveBtnText) saveBtnText.textContent = 'Сохранить';
-        return;
-      }
-    }
-  }
-
-  // 3. Для браузеров без прямого доступа к файловой системе (Brave без флага):
-  // НЕ вызываем скачивание автоматически, чтобы не всплывало системное окно сохранения Windows!
-  if (saveBtnText) saveBtnText.textContent = 'Сохранить';
-  openBraveNoticeModal();
+  updateStorageStatusUI(false, 'cortex_db.json');
+  showToast('Локальный файл отключен. Данные сохранены в браузере.');
 }
 
 function openBraveNoticeModal() {
@@ -697,8 +628,12 @@ async function tryAutoConnectDiskFile() {
 }
 
 function openWelcomeModal() {
-  const modal = document.getElementById('welcomeModalBackdrop');
-  if (modal) modal.classList.add('show');
+  if (window.openStorageModal) {
+    window.openStorageModal();
+  } else {
+    const modal = document.getElementById('welcomeModalBackdrop');
+    if (modal) modal.classList.add('show');
+  }
 }
 
 function closeWelcomeModal() {
@@ -1100,33 +1035,93 @@ async function writeToDiskFile(silent = true) {
         updateStorageStatusUI(true, state.fileHandle.name);
         // Запись на диск прошла успешно — гасим флаг несохраненных изменений
         state.hasUnsavedChanges = false;
-        const saveBtn = document.getElementById('manualSaveBtn');
-        if (saveBtn) saveBtn.classList.remove('visible');
         return true;
       }
     } catch (err) {
       console.warn('Автозапись на диск:', err);
     }
   }
-  // Если тихий фоновый режим не смог записать на диск без подтверждения — подсвечиваем кнопку «Сохранить»:
   markUnsaved();
   return false;
 }
 
-function updateStorageStatusUI(connected, text) {
-  const dot = document.getElementById('storageSyncDot');
-  const label = document.getElementById('storageSyncText');
-  const btn = document.getElementById('storageSyncBtn');
-  if (dot && label) {
-    dot.classList.toggle('connected', connected);
-    const fileName = text || state.linkedFileName || 'cortex_db.json';
-    label.textContent = connected ? `Диск: ${fileName}` : fileName;
-    if (btn) {
-      btn.title = connected
-        ? `База активна: ${fileName}. Нажмите для обновления или смены файла.`
-        : `Привязать базу данных (${fileName})`;
-    }
+function updateStorageHubUI(ghStatus = 'auto') {
+  const btn = document.getElementById('storageHubBtn');
+  const dot = document.getElementById('storageHubDot');
+  const icon = document.getElementById('storageHubIcon');
+  const text = document.getElementById('storageHubText');
+  if (!btn || !dot || !icon || !text) return;
+
+  const isGh = window.githubSync && githubSync.isConfigured();
+  const isDisk = !!(state.isDiskConnected && state.fileHandle);
+  const ghCfg = isGh ? githubSync.getConfig() : null;
+
+  if (ghStatus === 'syncing') {
+    dot.className = 'storage-hub-dot syncing';
+    icon.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>`;
+    text.textContent = 'Синхронизация...';
+    btn.title = 'Синхронизация с GitHub...';
+    return;
   }
+
+  if (isGh && isDisk) {
+    dot.className = 'storage-hub-dot connected';
+    icon.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>`;
+    const repoParts = ghCfg.repo.split('/');
+    const shortRepo = repoParts[1] || repoParts[0];
+    text.textContent = `GitHub: ${shortRepo}`;
+    btn.title = `Синхронизация активна: GitHub (${ghCfg.repo}) + локальный диск (${state.fileHandle.name}). Автосохранение включено.`;
+  } else if (isGh) {
+    dot.className = 'storage-hub-dot connected';
+    icon.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>`;
+    const repoParts = ghCfg.repo.split('/');
+    const shortRepo = repoParts[1] || repoParts[0];
+    text.textContent = `GitHub: ${shortRepo}`;
+    btn.title = `Синхронизация с GitHub активна (${ghCfg.repo}). Нажмите для настроек базы.`;
+  } else if (isDisk) {
+    dot.className = 'storage-hub-dot connected';
+    icon.innerHTML = `<img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">`;
+    const fileName = state.fileHandle.name || state.linkedFileName || 'cortex_db.json';
+    text.textContent = `Диск: ${fileName}`;
+    btn.title = `Файл на диске подключен (${fileName}). Автосохранение включено.`;
+  } else {
+    dot.className = 'storage-hub-dot';
+    icon.innerHTML = `<img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">`;
+    text.textContent = `База данных`;
+    btn.title = `Нажмите, чтобы выбрать способ хранения базы: через GitHub или локально на диске.`;
+  }
+}
+
+function updateStorageStatusUI(connected, text) {
+  const diskCard = document.getElementById('diskStatusCard');
+  const diskDot = document.getElementById('diskStatusDot');
+  const diskTitle = document.getElementById('diskStatusTitle');
+  const diskDesc = document.getElementById('diskStatusDesc');
+  const disconnectBtn = document.getElementById('diskDisconnectBtn');
+  const tabDot = document.getElementById('tabDiskActiveDot');
+
+  const fileName = text || (state.fileHandle ? state.fileHandle.name : state.linkedFileName) || 'cortex_db.json';
+
+  if (diskCard) diskCard.classList.toggle('connected', !!connected);
+  if (diskDot) {
+    diskDot.className = connected ? 'github-status-indicator connected' : 'github-status-indicator';
+  }
+  if (tabDot) {
+    tabDot.classList.toggle('connected', !!connected);
+  }
+  if (diskTitle) {
+    diskTitle.textContent = connected ? `Подключен файл: ${fileName}` : 'Файл на диске не выбран';
+  }
+  if (diskDesc) {
+    diskDesc.textContent = connected
+      ? `Прямая запись на диск активна. Все изменения автоматически записываются в ${fileName}.`
+      : 'Выберите файл cortex_db.json на диске или создайте новый. Все изменения автоматически записываются на диск.';
+  }
+  if (disconnectBtn) {
+    disconnectBtn.style.display = connected ? 'inline-flex' : 'none';
+  }
+
+  updateStorageHubUI();
 }
 
 // ==========================================================================
@@ -1294,22 +1289,19 @@ const githubSync = {
     const disconnectBtn = document.getElementById('ghDisconnectBtn');
     const syncNowBtn = document.getElementById('ghSyncNowBtn');
     const connectBtn = document.getElementById('ghConnectBtn');
+    const tabDot = document.getElementById('tabGithubActiveDot');
+
+    if (tabDot) tabDot.classList.toggle('connected', isConfigured);
 
     if (!isConfigured) {
-      if (headerDot) {
-        headerDot.className = 'github-sync-dot';
-      }
-      if (headerText) headerText.textContent = 'GitHub';
-      if (headerBtn) {
-        headerBtn.title = 'Подключить синхронизацию с GitHub';
-      }
-      if (statusCard) statusCard.classList.remove('connected');
+      if (statusCard) statusCard.classList.remove('connected', 'syncing', 'error');
       if (statusDot) statusDot.className = 'github-status-indicator';
       if (statusTitle) statusTitle.textContent = 'Не подключено';
-      if (statusDesc) statusDesc.textContent = 'Синхронизируйте базу cortex_db.json с вашим личным репозиторием на GitHub';
+      if (statusDesc) statusDesc.textContent = 'Синхронизируйте базу cortex_db.json с вашим личным репозиторием на GitHub. Изменения сохраняются автоматически.';
       if (disconnectBtn) disconnectBtn.style.display = 'none';
       if (syncNowBtn) syncNowBtn.style.display = 'none';
-      if (connectBtn) connectBtn.textContent = 'Проверить и сохранить';
+      if (connectBtn) connectBtn.textContent = 'Подключить GitHub';
+      updateStorageHubUI();
       return;
     }
 
@@ -1330,29 +1322,35 @@ const githubSync = {
     }
 
     if (status === 'syncing') {
-      if (headerDot) headerDot.className = 'github-sync-dot syncing';
+      if (statusCard) {
+        statusCard.classList.remove('connected', 'error');
+        statusCard.classList.add('syncing');
+      }
       if (statusDot) statusDot.className = 'github-status-indicator syncing';
       if (statusTitle) statusTitle.textContent = `Синхронизация с ${repoName}...`;
       if (statusDesc) statusDesc.textContent = customMsg || 'Отправка и получение обновлений...';
       if (syncNowBtn) syncNowBtn.disabled = true;
+      updateStorageHubUI('syncing');
     } else if (status === 'error') {
-      if (headerDot) headerDot.className = 'github-sync-dot error';
+      if (statusCard) {
+        statusCard.classList.remove('connected', 'syncing');
+        statusCard.classList.add('error');
+      }
       if (statusDot) statusDot.className = 'github-status-indicator error';
       if (statusTitle) statusTitle.textContent = 'Ошибка синхронизации';
       if (statusDesc) statusDesc.textContent = customMsg || 'Проверьте токен или интернет-соединение';
       if (syncNowBtn) syncNowBtn.disabled = false;
+      updateStorageHubUI('error');
     } else {
-      // Подключено и готово
-      if (headerDot) headerDot.className = 'github-sync-dot connected';
-      if (headerText) headerText.textContent = 'GitHub';
-      if (headerBtn) {
-        headerBtn.title = `GitHub: ${repoName} (${branch}). Нажмите для настроек.`;
+      if (statusCard) {
+        statusCard.classList.remove('syncing', 'error');
+        statusCard.classList.add('connected');
       }
-      if (statusCard) statusCard.classList.add('connected');
       if (statusDot) statusDot.className = 'github-status-indicator connected';
       if (statusTitle) statusTitle.textContent = `Подключено: ${repoName}`;
-      if (statusDesc) statusDesc.textContent = `Ветка: ${branch}, файл: ${path}${lastSyncStr}`;
+      if (statusDesc) statusDesc.textContent = `Ветка: ${branch}, файл: ${path}${lastSyncStr} • Автосохранение включено`;
       if (syncNowBtn) syncNowBtn.disabled = false;
+      updateStorageHubUI();
     }
   },
 
@@ -1680,11 +1678,17 @@ const githubSync = {
 };
 window.githubSync = githubSync;
 
-function setupGitHubEvents() {
-  const modalBackdrop = document.getElementById('githubModalBackdrop');
-  const openModalBtn = document.getElementById('githubSyncHeaderBtn');
-  const openMenuBtn = document.getElementById('githubSyncMenuBtn');
-  const closeModalBtn = document.getElementById('closeGithubModalBtn');
+function setupStorageModalEvents() {
+  const modalBackdrop = document.getElementById('storageModalBackdrop') || document.getElementById('githubModalBackdrop');
+  const hubBtn = document.getElementById('storageHubBtn') || document.getElementById('githubSyncHeaderBtn');
+  const closeBtn = document.getElementById('closeStorageModalBtn') || document.getElementById('closeGithubModalBtn');
+  const closeFooterBtn = document.getElementById('closeStorageModalFooterBtn');
+
+  const tabBtnGithub = document.getElementById('tabBtnGithub');
+  const tabBtnDisk = document.getElementById('tabBtnDisk');
+  const tabPaneGithub = document.getElementById('tabPaneGithub');
+  const tabPaneDisk = document.getElementById('tabPaneDisk');
+
   const toggleTokenBtn = document.getElementById('ghToggleTokenBtn');
   const tokenInput = document.getElementById('ghTokenInput');
   const repoInput = document.getElementById('ghRepoInput');
@@ -1693,9 +1697,38 @@ function setupGitHubEvents() {
   const connectBtn = document.getElementById('ghConnectBtn');
   const disconnectBtn = document.getElementById('ghDisconnectBtn');
   const syncNowBtn = document.getElementById('ghSyncNowBtn');
-  const dataMenu = document.getElementById('dataMenu');
 
-  function openModal() {
+  const diskChooseFileBtn = document.getElementById('diskChooseFileBtn');
+  const diskCreateFileBtn = document.getElementById('diskCreateFileBtn');
+  const diskDisconnectBtn = document.getElementById('diskDisconnectBtn');
+
+  const downloadJsonBtn = document.getElementById('storageDownloadJsonBtn');
+  const importJsonBtn = document.getElementById('storageImportJsonBtn');
+  const importFileInput = document.getElementById('importFileInput');
+  const clearAllBtn = document.getElementById('storageClearAllBtn');
+
+  function switchTab(tab) {
+    if (tab === 'disk') {
+      if (tabBtnDisk) tabBtnDisk.classList.add('active');
+      if (tabBtnGithub) tabBtnGithub.classList.remove('active');
+      if (tabPaneDisk) tabPaneDisk.style.display = 'block';
+      if (tabPaneGithub) tabPaneGithub.style.display = 'none';
+      if (connectBtn) connectBtn.style.display = 'none';
+      if (syncNowBtn) syncNowBtn.style.display = 'none';
+      if (disconnectBtn) disconnectBtn.style.display = 'none';
+    } else {
+      if (tabBtnGithub) tabBtnGithub.classList.add('active');
+      if (tabBtnDisk) tabBtnDisk.classList.remove('active');
+      if (tabPaneGithub) tabPaneGithub.style.display = 'block';
+      if (tabPaneDisk) tabPaneDisk.style.display = 'none';
+      if (connectBtn) connectBtn.style.display = 'inline-flex';
+      const isGh = githubSync.isConfigured();
+      if (syncNowBtn) syncNowBtn.style.display = isGh ? 'inline-flex' : 'none';
+      if (disconnectBtn) disconnectBtn.style.display = isGh ? 'inline-flex' : 'none';
+    }
+  }
+
+  function openStorageModal(preferredTab = 'auto') {
     const cfg = githubSync.getConfig();
     if (cfg) {
       if (tokenInput) tokenInput.value = cfg.token || '';
@@ -1706,40 +1739,78 @@ function setupGitHubEvents() {
       if (branchInput && !branchInput.value) branchInput.value = 'main';
       if (pathInput && !pathInput.value) pathInput.value = 'cortex_db.json';
     }
+
     githubSync.updateUI();
+    updateStorageStatusUI(state.isDiskConnected, state.fileHandle ? state.fileHandle.name : state.linkedFileName);
+
+    if (preferredTab === 'disk') {
+      switchTab('disk');
+    } else if (preferredTab === 'github') {
+      switchTab('github');
+    } else {
+      if (state.isDiskConnected && !githubSync.isConfigured()) {
+        switchTab('disk');
+      } else {
+        switchTab('github');
+      }
+    }
+
     if (modalBackdrop) modalBackdrop.classList.add('show');
   }
 
-  function closeModal() {
+  function closeStorageModal() {
     if (modalBackdrop) modalBackdrop.classList.remove('show');
   }
 
-  if (openModalBtn) {
-    openModalBtn.addEventListener('click', () => {
-      openModal();
+  window.openStorageModal = openStorageModal;
+  window.closeStorageModal = closeStorageModal;
+
+  if (hubBtn) hubBtn.addEventListener('click', () => openStorageModal());
+  if (closeBtn) closeBtn.addEventListener('click', closeStorageModal);
+  if (closeFooterBtn) closeFooterBtn.addEventListener('click', closeStorageModal);
+
+  if (tabBtnGithub) tabBtnGithub.addEventListener('click', () => switchTab('github'));
+  if (tabBtnDisk) tabBtnDisk.addEventListener('click', () => switchTab('disk'));
+
+  if (diskChooseFileBtn) {
+    diskChooseFileBtn.addEventListener('click', async () => {
+      await connectDiskFile(true);
     });
   }
 
-  if (openMenuBtn) {
-    openMenuBtn.addEventListener('click', () => {
-      if (dataMenu) dataMenu.classList.remove('show');
-      openModal();
+  if (diskCreateFileBtn) {
+    diskCreateFileBtn.addEventListener('click', async () => {
+      await createNewDatabase(false);
     });
   }
 
-  if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', closeModal);
+  if (diskDisconnectBtn) {
+    diskDisconnectBtn.addEventListener('click', async () => {
+      await disconnectDiskFile();
+    });
+  }
+
+  if (downloadJsonBtn) {
+    downloadJsonBtn.addEventListener('click', () => downloadDatabase());
+  }
+
+  if (importJsonBtn && importFileInput) {
+    importJsonBtn.addEventListener('click', () => importFileInput.click());
+  }
+
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', () => clearAllItems());
   }
 
   if (modalBackdrop) {
     modalBackdrop.addEventListener('click', (e) => {
-      if (e.target === modalBackdrop) closeModal();
+      if (e.target === modalBackdrop) closeStorageModal();
     });
   }
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modalBackdrop && modalBackdrop.classList.contains('show')) {
-      closeModal();
+      closeStorageModal();
     }
   });
 
@@ -1792,7 +1863,6 @@ function setupGitHubEvents() {
         showToast('GitHub успешно подключен! Синхронизация данных...', 'success');
         githubSync.updateUI('connected');
 
-        // Выполняем первую синхронизацию (pull + push)
         await githubSync.syncNow(true);
       } catch (err) {
         console.error('Ошибка проверки соединения с GitHub:', err);
@@ -1800,7 +1870,7 @@ function setupGitHubEvents() {
         githubSync.updateUI('error', err.message);
       } finally {
         connectBtn.disabled = false;
-        connectBtn.textContent = githubSync.isConfigured() ? 'Обновить настройки' : 'Проверить и сохранить';
+        githubSync.updateUI();
       }
     });
   }
@@ -1812,6 +1882,7 @@ function setupGitHubEvents() {
         await githubSync.syncNow(true);
       } finally {
         syncNowBtn.disabled = false;
+        githubSync.updateUI();
       }
     });
   }
@@ -1827,6 +1898,10 @@ function setupGitHubEvents() {
       }
     });
   }
+}
+
+function setupGitHubEvents() {
+  setupStorageModalEvents();
 }
 
 // ==========================================================================
@@ -2371,14 +2446,11 @@ function setupEventListeners() {
   // Выпадающее меню выбора тем оформления
   const themeMenuBtn = document.getElementById('themeMenuBtn');
   const themeMenu = document.getElementById('themeMenu');
-  const dataMenuBtn = document.getElementById('dataMenuBtn');
-  const dataMenu = document.getElementById('dataMenu');
 
   if (themeMenuBtn && themeMenu) {
     themeMenuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       themeMenu.classList.toggle('show');
-      if (dataMenu) dataMenu.classList.remove('show');
     });
 
     themeMenu.addEventListener('click', (e) => {
@@ -2398,24 +2470,7 @@ function setupEventListeners() {
     });
   }
 
-  // Кнопка привязки/статуса базы на диске в шапке
-  const storageSyncBtn = document.getElementById('storageSyncBtn');
-  if (storageSyncBtn) {
-    storageSyncBtn.addEventListener('click', async () => {
-      // Открываем проводник напрямую в директории файла базы
-      await connectDiskFile(true);
-    });
-  }
-
-  // Кнопка ручного сохранения базы в файл
-  const manualSaveBtn = document.getElementById('manualSaveBtn');
-  if (manualSaveBtn) {
-    manualSaveBtn.addEventListener('click', () => {
-      manualSaveDatabase();
-    });
-  }
-
-  // Горячая клавиша Ctrl+S / Cmd+S для мгновенного сохранения
+  // Горячая клавиша Ctrl+S / Cmd+S для быстрого сохранения
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
       e.preventDefault();
@@ -2451,48 +2506,6 @@ function setupEventListeners() {
     });
   }
 
-  // Меню данных (Дропдаун)
-  if (dataMenuBtn && dataMenu) {
-    dataMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dataMenu.classList.toggle('show');
-      if (themeMenu) themeMenu.classList.remove('show');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dataMenu.contains(e.target) && e.target !== dataMenuBtn) {
-        dataMenu.classList.remove('show');
-      }
-    });
-  }
-
-  // Пункт «Создать новую базу» в меню данных
-  const createNewDbBtn = document.getElementById('createNewDbBtn');
-  if (createNewDbBtn) {
-    createNewDbBtn.addEventListener('click', () => {
-      dataMenu.classList.remove('show');
-      createNewDatabase();
-    });
-  }
-
-  // Пункт выбора существующей базы в меню данных
-  const linkDiskFileBtn = document.getElementById('linkDiskFileBtn');
-  if (linkDiskFileBtn) {
-    linkDiskFileBtn.addEventListener('click', () => {
-      dataMenu.classList.remove('show');
-      connectDiskFile(true);
-    });
-  }
-
-  // Скачивание файла cortex_db.json
-  const downloadDbBtn = document.getElementById('downloadDbBtn');
-  if (downloadDbBtn) {
-    downloadDbBtn.addEventListener('click', () => {
-      dataMenu.classList.remove('show');
-      downloadDatabase();
-    });
-  }
-
   // Фолбэк-инпут выбора файла
   const fallbackDiskFileInput = document.getElementById('fallbackDiskFileInput');
   if (fallbackDiskFileInput) {
@@ -2521,7 +2534,7 @@ function setupEventListeners() {
   if (welcomeSkipBtn) {
     welcomeSkipBtn.addEventListener('click', () => {
       closeWelcomeModal();
-      showToast('💡 Вы можете создать или выбрать базу в меню «Данные»');
+      showToast('💡 Вы можете настроить базу в любой момент по кнопке «База данных»');
     });
   }
   if (closeWelcomeModalBtn) {
@@ -2533,19 +2546,14 @@ function setupEventListeners() {
     });
   }
 
-  const importJsonBtn = document.getElementById('importJsonBtn');
   const importFileInput = document.getElementById('importFileInput');
-  if (importJsonBtn && importFileInput) {
-    importJsonBtn.addEventListener('click', () => {
-      dataMenu.classList.remove('show');
-      importFileInput.click();
-    });
-  }
   if (importFileInput) {
     importFileInput.addEventListener('change', importData);
   }
-  document.getElementById('exportDataBtn').addEventListener('click', exportData);
-  document.getElementById('clearAllBtn').addEventListener('click', clearAllItems);
+  const exportDataBtn = document.getElementById('exportDataBtn');
+  if (exportDataBtn) exportDataBtn.addEventListener('click', exportData);
+  const clearAllBtn = document.getElementById('clearAllBtn');
+  if (clearAllBtn) clearAllBtn.addEventListener('click', clearAllItems);
   const resetDemoBtn = document.getElementById('resetDemoBtn');
   if (resetDemoBtn) {
     resetDemoBtn.addEventListener('click', resetToDemo);
