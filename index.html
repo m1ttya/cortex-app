@@ -461,7 +461,7 @@
       <div class="modal-header">
         <h2 id="modalTitle">Редактировать материал</h2>
         <button class="modal-close-btn" id="closeModalBtn" title="Закрыть">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
       <form id="editItemForm" class="modal-body">
@@ -591,7 +591,9 @@
           <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png" class="apple-emoji" style="width: 28px; height: 28px;" alt="🧠">
           <span>CORTEX</span>
         </div>
-        <button type="button" class="modal-close-btn" id="closeWelcomeModalBtn" title="Закрыть">&times;</button>
+        <button type="button" class="modal-close-btn" id="closeWelcomeModalBtn" title="Закрыть">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
       <div class="modal-body welcome-body">
         <div class="welcome-heading-group">
@@ -648,7 +650,9 @@
           <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
           Прямая запись без окон сохранения
         </h3>
-        <button type="button" class="modal-close-btn" id="closeBraveNoticeModalBtn">&times;</button>
+        <button type="button" class="modal-close-btn" id="closeBraveNoticeModalBtn" title="Закрыть">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
       <div class="modal-body" style="line-height: 1.6; font-size: 0.92rem; color: var(--text-secondary);">
         <p style="margin-bottom: 12px;">
@@ -686,13 +690,15 @@
 
   <!-- Модальное окно: Выбор и настройка хранилища базы данных (GitHub или Локально) -->
   <div class="modal-backdrop" id="storageModalBackdrop">
-    <div class="modal-dialog storage-dialog" style="max-width: 580px;">
+    <div class="modal-dialog storage-dialog" style="max-width: 620px;">
       <div class="modal-header">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
           <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
           Хранилище базы данных
         </h3>
-        <button type="button" class="modal-close-btn" id="closeStorageModalBtn">&times;</button>
+        <button type="button" class="modal-close-btn" id="closeStorageModalBtn" title="Закрыть">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
       <div class="modal-body" style="line-height: 1.5; font-size: 0.92rem;">
         <!-- Переключатель режима: Через GitHub или Локально на диске -->
@@ -831,17 +837,19 @@
       </div>
 
       <div class="modal-footer github-modal-footer">
-        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #79c991; margin-right: auto;">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#79c991" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-          <span style="font-weight: 500;">Автосохранение включено</span>
-        </div>
-        <div class="github-footer-actions">
+        <div class="github-footer-status-row">
+          <div class="storage-auto-save-badge">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#79c991" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Автосохранение включено</span>
+          </div>
           <button type="button" class="btn btn-secondary btn-sm text-danger" id="ghDisconnectBtn" style="display: none;">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
             <span>Отключить</span>
           </button>
+        </div>
+        <div class="github-footer-actions">
           <button type="button" class="btn btn-secondary btn-sm" id="ghSyncNowBtn" style="display: none;">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
             <span>Синхронизировать</span>
           </button>
           <button type="button" class="btn btn-primary btn-sm" id="ghConnectBtn">
@@ -863,7 +871,9 @@
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           Настройки источников и LLM
         </h3>
-        <button type="button" class="modal-close-btn" id="closeNewsSettingsModalBtn">&times;</button>
+        <button type="button" class="modal-close-btn" id="closeNewsSettingsModalBtn" title="Закрыть">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
       <div class="modal-body" style="gap: 18px; line-height: 1.5; font-size: 0.92rem;">
         <!-- Блок 1: Провайдер нейросети (LLM) -->
@@ -955,7 +965,9 @@
         <h3 class="modal-title" id="folderEditModalTitle" style="display: flex; align-items: center; gap: 8px;">
           📁 Создать папку
         </h3>
-        <button type="button" class="modal-close-btn" id="closeFolderEditModalBtn">&times;</button>
+        <button type="button" class="modal-close-btn" id="closeFolderEditModalBtn" title="Закрыть">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
       <form id="folderEditForm" class="modal-body" style="gap: 16px;">
         <input type="hidden" id="folderEditId">

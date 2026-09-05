@@ -1902,24 +1902,46 @@ body {
 }
 
 .modal-close-btn {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
   border-radius: var(--radius-md);
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  display: flex;
+  color: var(--text-secondary);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: var(--transition);
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.modal-close-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2.3;
+  transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
 .modal-close-btn:hover {
   background: var(--bg-card-hover);
   color: var(--text-primary);
   border-color: var(--border-hover);
-  transform: scale(1.04);
+  transform: scale(1.08);
+}
+
+.modal-close-btn:hover svg {
+  transform: rotate(90deg);
+}
+
+.modal-close-btn:active {
+  transform: scale(0.96);
 }
 
 .modal-body {
@@ -2244,11 +2266,48 @@ select.form-input:hover {
   box-sizing: border-box;
 }
 
-.github-footer-actions {
-  display: flex;
+.storage-dialog {
+  width: 95%;
+  max-width: 620px !important;
+}
+
+.github-modal-footer {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding: 14px 22px !important;
+  background: var(--bg-card-solid) !important;
+  border-top: 1px solid var(--border-subtle) !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.github-footer-status-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 28px !important;
+}
+
+.storage-auto-save-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin-left: auto;
+  gap: 7px;
+  font-size: 0.84rem;
+  color: #79c991;
+  font-weight: 500;
+  user-select: none;
+}
+
+.github-footer-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  margin-left: 0 !important;
 }
 
 .github-modal-footer .btn {
@@ -2256,13 +2315,14 @@ select.form-input:hover {
   min-height: 38px !important;
   max-height: 38px !important;
   line-height: 38px !important;
-  padding: 0 16px !important;
-  font-size: 0.85rem !important;
+  padding: 0 14px !important;
+  font-size: 0.86rem !important;
   font-weight: 600 !important;
   white-space: nowrap !important;
   border-radius: var(--radius-md) !important;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -2271,9 +2331,17 @@ select.form-input:hover {
 }
 
 .github-modal-footer #ghDisconnectBtn {
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 10px !important;
+  font-size: 0.8rem !important;
   background: rgba(239, 68, 68, 0.1) !important;
   border: 1px solid rgba(239, 68, 68, 0.25) !important;
   color: #f87171 !important;
+  border-radius: var(--radius-sm) !important;
+  margin-left: auto;
 }
 
 .github-modal-footer #ghDisconnectBtn:hover {
@@ -2295,29 +2363,21 @@ select.form-input:hover {
 
 @media (max-width: 520px) {
   .github-modal-footer {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
     padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+  .github-footer-status-row {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
   }
   .github-footer-actions {
-    width: 100% !important;
-    margin-left: 0 !important;
     display: flex !important;
     gap: 8px !important;
   }
   .github-footer-actions .btn {
-    flex: 1 1 50% !important;
-    justify-content: center !important;
+    flex: 1 1 auto !important;
+    min-width: 90px !important;
     padding: 0 8px !important;
-    font-size: 0.8rem !important;
-    height: 38px !important;
-    white-space: nowrap !important;
-  }
-  .github-modal-footer #ghDisconnectBtn {
-    width: 100% !important;
-    justify-content: center !important;
-    height: 34px !important;
     font-size: 0.8rem !important;
   }
 }
