@@ -1,0 +1,41 @@
+name: "Update News Digest"
+
+on:
+  schedule:
+    # Запуск каждые 2 часа
+    - cron: '0 */2 * * *'
+  workflow_dispatch: # Возможность ручного запуска кнопкой в GitHub
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run News Aggregator & LLM Summarizer
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python scripts/news_engine.py
+
+      - name: Commit and push updated news digest
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add news_digest.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(news): auto-update news digest [skip ci]"
+            git pull --rebase origin main || true
+            git push
+          fi

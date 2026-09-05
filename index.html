@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CORTEX — Персональный Второй Мозг</title>
+  <meta name="description" content="Минималистичный и мощный персональный центр знаний, бэклога и трекинга изучения материалов">
+  <meta name="theme-color" content="#121316">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CORTEX">
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/160/1f9e0.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Шапка приложения -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="logo-mark" title="CORTEX Второй Мозг">
+          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png" class="apple-emoji" alt="🧠">
+        </div>
+        <div class="brand-text">
+          <h1>CORTEX <span class="badge-tag">Second Brain</span></h1>
+          <p class="subtitle">Фокус на важном: трекинг, изучение и база знаний</p>
+        </div>
+      </div>
+
+      <!-- Виджет общей статистики -->
+      <div class="metrics-bar" id="metricsBar">
+        <div class="metric-item" title="Всего добавленных материалов">
+          <span class="metric-label">Всего:</span>
+          <span class="metric-value" id="statTotal">0</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item highlight-planned" title="В очереди / еще не начато">
+          <span class="metric-label">В планах:</span>
+          <span class="metric-value" id="statPlanned">0</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item highlight-progress" title="В процессе / изучается прямо сейчас">
+          <span class="metric-label">В процессе:</span>
+          <span class="metric-value" id="statProgress">0</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item highlight-done" title="Полностью изучено или сделано">
+          <span class="metric-label">Готово:</span>
+          <span class="metric-value" id="statDone">0</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-progress-wrapper highlight-progress-total" title="Общий процент завершения">
+          <span class="metric-label">Прогресс:</span>
+          <span class="metric-value progress-percent" id="statPercent">0%</span>
+          <div class="progress-track">
+            <div class="progress-fill" id="statProgressBar" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Действия шапки (тема, диск, экспорт/импорт) -->
+      <div class="header-actions">
+        <!-- Кнопка привязки и статуса локального файла на диске -->
+        <button class="btn btn-secondary btn-sm storage-sync-btn" id="storageSyncBtn" title="Нажмите, чтобы выбрать или сменить файл базы">
+          <span class="storage-sync-dot" id="storageSyncDot"></span>
+          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
+          <span id="storageSyncText">База: cortex_db.json</span>
+        </button>
+        <input type="file" id="fallbackDiskFileInput" accept=".json" style="display:none">
+
+        <!-- Кнопка ручного сохранения базы в файл -->
+        <button class="btn btn-secondary btn-sm save-manual-btn" id="manualSaveBtn" title="Сохранить базу в файл (Ctrl+S)">
+          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
+          <span id="manualSaveBtnText">Сохранить</span>
+          <span class="save-status-dot"></span>
+        </button>
+
+        <!-- Кнопка и статус GitHub синхронизации -->
+        <button class="btn btn-secondary btn-sm github-sync-header-btn" id="githubSyncHeaderBtn" title="Синхронизация с GitHub (нажмите для настройки)">
+          <span class="github-sync-dot" id="githubSyncHeaderDot"></span>
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span id="githubSyncHeaderText">GitHub</span>
+        </button>
+
+        <!-- Меню работы с данными и базой -->
+        <div class="dropdown-container">
+          <button class="btn btn-secondary btn-sm" id="dataMenuBtn" title="Резервное копирование и данные">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+            <span>Данные</span>
+          </button>
+          <div class="dropdown-menu" id="dataMenu">
+            <button type="button" class="dropdown-item" id="createNewDbBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/2795.png" class="apple-emoji apple-emoji-sm" alt="➕">
+              <span>Создать новую базу</span>
+            </button>
+            <button type="button" class="dropdown-item" id="linkDiskFileBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
+              <span>Выбрать существующую базу</span>
+            </button>
+            <button type="button" class="dropdown-item" id="downloadDbBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
+              <span>Скачать cortex_db.json</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button type="button" class="dropdown-item" id="githubSyncMenuBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="flex-shrink: 0;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              <span>Синхронизация с GitHub</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button type="button" class="dropdown-item" id="exportDataBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4e5.png" class="apple-emoji apple-emoji-sm" alt="📥">
+              <span>Экспорт резервной копии</span>
+            </button>
+            <button type="button" class="dropdown-item" id="importJsonBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4e4.png" class="apple-emoji apple-emoji-sm" alt="📤">
+              <span>Импорт из JSON</span>
+            </button>
+            <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            <div class="dropdown-divider"></div>
+            <button type="button" class="dropdown-item text-danger" id="clearAllBtn">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f5d1-fe0f.png" class="apple-emoji apple-emoji-sm" alt="🗑️">
+              <span>Очистить все материалы</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Разделитель между базой данных и визуальной темой -->
+        <div class="header-actions-divider"></div>
+
+        <!-- Выбор темы оформления (вынесен вправо отдельно) -->
+        <div class="dropdown-container">
+          <button class="icon-btn theme-picker-btn" id="themeMenuBtn" title="Выбрать тему оформления">
+            <span class="theme-accent-indicator" id="themeAccentIndicator"></span>
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f3a8.png" class="apple-emoji apple-emoji-sm" alt="🎨">
+          </button>
+          <div class="dropdown-menu theme-menu" id="themeMenu">
+            <div class="dropdown-header">ТЕМЫ ОФОРМЛЕНИЯ</div>
+            <button class="dropdown-item theme-item active" data-set-theme="dark-amber">
+              <span class="theme-color-preview" style="background: #161412; border: 2px solid #d89f6d;"></span>
+              <span>Эспрессо (Янтарь)</span>
+              <span class="theme-check">✓</span>
+            </button>
+            <button class="dropdown-item theme-item" data-set-theme="dark-emerald">
+              <span class="theme-color-preview" style="background: #101412; border: 2px solid #65a37f;"></span>
+              <span>Северная хвоя (Изумруд)</span>
+              <span class="theme-check"></span>
+            </button>
+            <button class="dropdown-item theme-item" data-set-theme="dark-sapphire">
+              <span class="theme-color-preview" style="background: #111318; border: 2px solid #6c9bc2;"></span>
+              <span>Полуночный сапфир</span>
+              <span class="theme-check"></span>
+            </button>
+            <button class="dropdown-item theme-item" data-set-theme="dark-amethyst">
+              <span class="theme-color-preview" style="background: #141217; border: 2px solid #a882bf;"></span>
+              <span>Сумеречный аметист</span>
+              <span class="theme-check"></span>
+            </button>
+            <button class="dropdown-item theme-item" data-set-theme="dark-terracotta">
+              <span class="theme-color-preview" style="background: #161212; border: 2px solid #cf7363;"></span>
+              <span>Тёплая терракота</span>
+              <span class="theme-check"></span>
+            </button>
+            <button class="dropdown-item theme-item" data-set-theme="dark-carbon">
+              <span class="theme-color-preview" style="background: #0e0e10; border: 2px solid #c4beb5;"></span>
+              <span>OLED Графит (Титан)</span>
+              <span class="theme-check"></span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item theme-item" data-set-theme="light">
+              <span class="theme-color-preview" style="background: #f8f5f0; border: 2px solid #ba7640;"></span>
+              <span>Светлый лён</span>
+              <span class="theme-check"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Главный переключатель разделов: Второй Мозг / Сводка Новостей -->
+    <nav class="main-section-nav" id="mainSectionNav">
+      <button type="button" class="nav-section-btn active" data-section="brain" id="navBrainBtn">
+        <span class="nav-icon"><img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png" class="apple-emoji apple-emoji-sm" alt="🧠"></span>
+        <span class="nav-title">Второй мозг</span>
+      </button>
+      <button type="button" class="nav-section-btn" data-section="news" id="navNewsBtn">
+        <span class="nav-icon"><img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4f0.png" class="apple-emoji apple-emoji-sm" alt="📰"></span>
+        <span class="nav-title">Сводка новостей</span>
+        <span class="nav-badge" id="newsCountBadge">12</span>
+      </button>
+    </nav>
+
+    <!-- Раздел: Второй мозг (База знаний, трекинг и канбан) -->
+    <div id="brainViewSection" class="brain-view-section">
+      <!-- Панель быстрого захвата (Quick Capture) -->
+      <section class="quick-capture-card">
+      <form id="quickCaptureForm" class="capture-form">
+        <div class="capture-input-group">
+          <div class="input-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </div>
+          <input type="text" id="quickTitleInput" placeholder="Ссылка или название материала..." autocomplete="off">
+          <button type="button" class="btn-clear-input" id="clearQuickInputBtn" title="Очистить">&times;</button>
+        </div>
+
+        <div class="capture-options-row">
+          <!-- Выбор типа контента -->
+          <div class="segmented-control" id="captureTypeGroup">
+            <button type="button" class="segment-btn active" data-type="read" title="Книга, статья, лонгрид, документация">
+              <span class="icon"><img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4d6.png" class="apple-emoji" alt="📖"></span> Читать
+            </button>
+            <button type="button" class="segment-btn" data-type="watch" title="Видео, лекция, курс, стрим">
+              <span class="icon"><img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f3ac.png" class="apple-emoji" alt="🎬"></span> Смотреть
+            </button>
+            <button type="button" class="segment-btn" data-type="study" title="Технология, фреймворк, концепция, навык">
+              <span class="icon"><img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png" class="apple-emoji" alt="🧠"></span> Изучать
+            </button>
+            <button type="button" class="segment-btn" data-type="do" title="Пет-проект, код, задача, практика">
+              <span class="icon"><img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/26a1.png" class="apple-emoji" alt="⚡"></span> Сделать
+            </button>
+          </div>
+
+          <!-- Приоритет -->
+          <div class="select-wrapper">
+            <select id="capturePrioritySelect" title="Приоритет">
+              <option value="medium" selected>Обычный</option>
+              <option value="high">Высокий</option>
+              <option value="low">Не к спеху</option>
+            </select>
+          </div>
+
+          <!-- Стартовый статус -->
+          <div class="select-wrapper">
+            <select id="captureStatusSelect" title="Стартовый статус">
+              <option value="planned" selected>В планах</option>
+              <option value="progress">В процессе</option>
+              <option value="done">Изучено</option>
+            </select>
+          </div>
+
+          <!-- Папка для сохранения -->
+          <div class="select-wrapper select-folder-wrapper">
+            <select id="captureFolderSelect" title="Папка для сохранения новой записи">
+              <option value="">📁 Без папки (Корень)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="addCaptureBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Добавить</span>
+          </button>
+        </div>
+
+        <!-- Выбор и привязка тегов -->
+        <div class="capture-tags-row" id="captureTagsRow">
+          <span class="tags-label">Теги:</span>
+          <div class="capture-tags-chips" id="captureTagsChips">
+            <!-- Динамически заполняется пресетами формата -->
+          </div>
+          <div class="custom-tag-input-wrap">
+            <input type="text" id="quickCustomTagInput" placeholder="+ Свой тег (Enter)..." autocomplete="off">
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Панель управления отображением, фильтрами и поиском -->
+    <section class="controls-toolbar">
+      <!-- Верхняя строка: Поиск, Статусы, Кнопка папки и Переключатель вида -->
+      <div class="toolbar-top-row">
+        <!-- Поиск -->
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="searchInput" placeholder="Поиск материалов..." autocomplete="off">
+          <span class="keyboard-hint" title="Быстрый поиск">/</span >
+        </div>
+
+        <!-- Фильтр по статусу (для режима списка) -->
+        <div class="filter-pills status-filter-pills" id="statusFilterPills">
+          <button class="pill-btn active" data-filter-status="all"><span>Все статусы</span></button>
+          <button class="pill-btn" data-filter-status="planned">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4cb.png" class="apple-emoji apple-emoji-sm" alt="📋">
+            <span>В планах</span>
+          </button>
+          <button class="pill-btn" data-filter-status="progress">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/23f3.png" class="apple-emoji apple-emoji-sm" alt="⏳">
+            <span>В процессе</span>
+          </button>
+          <button class="pill-btn" data-filter-status="done">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/2705.png" class="apple-emoji apple-emoji-sm" alt="✅">
+            <span>Готово</span>
+          </button>
+        </div>
+
+        <!-- Кнопка создания новой папки (проводник Windows стиль) -->
+        <button type="button" class="btn btn-secondary btn-sm btn-new-folder" id="createFolderBtn" title="Создать новую папку">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="12" y1="11" x2="12" y2="17"></line><line x1="9" y1="14" x2="15" y2="14"></line></svg>
+          <span>+ Папка</span>
+        </button>
+
+        <!-- Переключатель вида (Список / Канбан) -->
+        <div class="view-switch-wrapper">
+          <div class="view-switch" id="viewModeSwitch">
+            <button class="view-btn active" data-view="list" title="Компактный список с быстрыми чекбоксами">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              Список
+            </button>
+            <button class="view-btn" data-view="board" title="Канбан-доска со столбцами">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="18" rx="1"></rect></svg>
+              Канбан
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Вторая строка: Форматы и Теги в едином ряду -->
+      <div class="toolbar-bottom-row">
+        <!-- Фильтр по типам контента -->
+        <div class="filter-pills" id="typeFilterPills">
+          <button class="pill-btn active" data-filter-type="all">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/2728.png" class="apple-emoji apple-emoji-sm" alt="✨">
+            <span>Все форматы</span>
+          </button>
+          <button class="pill-btn" data-filter-type="read">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4d6.png" class="apple-emoji apple-emoji-sm" alt="📖">
+            <span>Читать</span>
+          </button>
+          <button class="pill-btn" data-filter-type="watch">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f3ac.png" class="apple-emoji apple-emoji-sm" alt="🎬">
+            <span>Смотреть</span>
+          </button>
+          <button class="pill-btn" data-filter-type="study">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png" class="apple-emoji apple-emoji-sm" alt="🧠">
+            <span>Изучать</span>
+          </button>
+          <button class="pill-btn" data-filter-type="do">
+            <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/26a1.png" class="apple-emoji apple-emoji-sm" alt="⚡">
+            <span>Сделать</span>
+          </button>
+        </div>
+
+        <div class="toolbar-divider-v"></div>
+
+        <!-- Фильтр по тегам -->
+        <div class="filter-pills tag-filter-pills" id="tagFilterPills">
+          <button class="pill-btn pill-tag active" data-filter-tag="all">Все теги</button>
+          <!-- Динамические чипы активных тегов -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Основная рабочая область -->
+    <main class="main-content">
+      <!-- 1. Режим: Компактный интерактивный список (List View) -->
+      <div class="content-view view-list active" id="listView">
+        <div class="list-headers">
+          <div class="col-status">Статус</div>
+          <div class="col-title">Материал</div>
+          <div class="col-type">Формат</div>
+          <div class="col-priority">Приоритет</div>
+          <div class="col-progress-bar">Прогресс</div>
+          <div class="col-actions"></div>
+        </div>
+        <!-- Навигационная строка папки (строго под заголовками, чтобы заголовки никогда не перепрыгивали) -->
+        <div class="explorer-address-bar" id="explorerAddressBar" style="display: none;">
+          <button type="button" class="btn-explorer-up" id="explorerUpBtn" title="На уровень выше (перетащите сюда запись для перемещения)">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Вверх</span>
+          </button>
+          <nav class="explorer-breadcrumbs" id="explorerBreadcrumbs" aria-label="Путь к текущей папке">
+            <!-- Рендерится через JS: 📁 Все материалы › 🕷️ Фильмы про Человека-паука -->
+          </nav>
+          <div class="explorer-current-actions" id="explorerCurrentFolderActions">
+            <!-- Редактировать / Удалить текущую папку -->
+          </div>
+        </div>
+        <!-- Список папок текущего уровня (в стиле проводника Windows) -->
+        <div class="folders-list-container" id="foldersListContainer"></div>
+        <div class="items-list-container" id="itemsListContainer">
+          <!-- Динамически рендерится через JS -->
+        </div>
+      </div>
+
+      <!-- 2. Режим: Канбан-доска (Board View) -->
+      <div class="content-view view-board" id="boardView">
+        <!-- Навигационная строка папки в канбан-режиме -->
+        <div class="explorer-address-bar kanban-address-bar" id="kanbanAddressBar" style="display: none;">
+          <button type="button" class="btn-explorer-up" id="kanbanUpBtn" title="На уровень выше">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Вверх</span>
+          </button>
+          <nav class="explorer-breadcrumbs" id="kanbanBreadcrumbs" aria-label="Путь к текущей папке"></nav>
+          <div class="explorer-current-actions" id="kanbanCurrentFolderActions"></div>
+        </div>
+        <!-- Папки текущего уровня в канбан-режиме (drop-зоны) -->
+        <div class="kanban-folders-bar" id="kanbanFoldersBar" style="display: none;"></div>
+        <div class="board-columns-grid">
+          <!-- Колонка: В планах -->
+          <div class="board-column column-planned" data-column-status="planned">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="status-indicator planned-dot"></span>
+                <h3>В планах</h3>
+              </div>
+              <span class="column-count" id="countColPlanned">0</span>
+            </div>
+            <div class="cards-dropzone" id="cardsPlannedDropzone">
+              <!-- Карточки будут здесь -->
+            </div>
+          </div>
+
+          <!-- Колонка: В процессе / Частично -->
+          <div class="board-column column-progress" data-column-status="progress">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="status-indicator progress-dot"></span>
+                <h3>В процессе</h3>
+              </div>
+              <span class="column-count" id="countColProgress">0</span>
+            </div>
+            <div class="cards-dropzone" id="cardsProgressDropzone">
+              <!-- Карточки будут здесь -->
+            </div>
+          </div>
+
+          <!-- Колонка: Готово / Завершено -->
+          <div class="board-column column-done" data-column-status="done">
+            <div class="column-header">
+              <div class="column-title-group">
+                <span class="status-indicator done-dot"></span>
+                <h3>Изучено</h3>
+              </div>
+              <span class="column-count" id="countColDone">0</span>
+            </div>
+            <div class="cards-dropzone" id="cardsDoneDropzone">
+              <!-- Карточки будут здесь -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Состояние пустого списка / результатов поиска -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-illustration" id="emptyIllustration">✨</div>
+        <h3 id="emptyTitle">Пока ничего нет</h3>
+        <p id="emptyDesc">Добавьте первый материал через строку быстрого захвата выше</p>
+        <button type="button" class="btn btn-secondary" id="resetFiltersBtn" style="display: none;">Сбросить все фильтры</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Секция: Сводка новостей с LLM-суммаризацией -->
+  <section id="newsViewSection" class="news-view-section" style="display: none;">
+    <!-- Панель управления новостями: категории, поиск, настройки -->
+    <div class="news-controls-card">
+      <div class="news-top-row">
+        <div class="news-categories-scroll" id="newsCategoryPills">
+          <button type="button" class="pill-btn active" data-category="all">Все категории</button>
+          <button type="button" class="pill-btn" data-category="main">🔥 Главное</button>
+          <button type="button" class="pill-btn" data-category="russia">🇷🇺 Россия</button>
+          <button type="button" class="pill-btn" data-category="city">🏙️ Город</button>
+          <button type="button" class="pill-btn" data-category="world">🌍 Мир</button>
+          <button type="button" class="pill-btn" data-category="tech">⚡ Технологии</button>
+          <button type="button" class="pill-btn" data-category="telegram">
+            <svg class="tg-svg-icon" viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="12" fill="#24A1DE"/><path fill="#fff" d="M5.41 12.08L16.27 7.5c.5-.2.96.12.8.68l-1.85 8.72c-.14.63-.51.78-1.04.49l-2.82-2.08-1.36 1.31c-.15.15-.28.28-.57.28l.2-2.88 5.24-4.73c.23-.2-.05-.32-.36-.11l-6.48 4.08-2.8-.87c-.61-.19-.62-.61.13-.9z"/></svg>
+            <span>Telegram</span>
+          </button>
+        </div>
+
+        <div class="news-action-buttons">
+          <button type="button" class="btn btn-secondary btn-sm" id="newsSettingsBtn" title="Настройка подключенных источников и LLM-провайдера">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span class="btn-text-desktop">Источники и LLM</span>
+            <span class="btn-text-mobile">Источники</span>
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="newsRefreshBtn" title="Обновить сводку новостей">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            <span>Обновить</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="news-search-row">
+        <div class="search-input-wrapper">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="newsSearchInput" placeholder="Поиск по новостям и сюжетам..." autocomplete="off">
+        </div>
+        <div class="news-info-pill" id="newsInfoPill">
+          <span class="news-provider-indicator" id="newsProviderDot"></span>
+          <span id="newsProviderLabel">LLM: Gemini 2.0 Flash</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Контейнер карточек новостей -->
+    <div class="news-grid-container" id="newsDigestGrid">
+      <!-- Карточки новостей рендерятся динамически -->
+    </div>
+
+    <!-- Пустое состояние новостей -->
+    <div class="empty-state" id="newsEmptyState" style="display: none;">
+      <div class="empty-illustration">📰</div>
+      <h3>Ничего не найдено</h3>
+      <p>По выбранным фильтрам или поисковому запросу нет новостей</p>
+    </div>
+  </section>
+
+  <!-- Модальное окно редактирования и детальной информации -->
+  <div class="modal-backdrop" id="editModalBackdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modalTitle">Редактировать материал</h2>
+        <button class="modal-close-btn" id="closeModalBtn" title="Закрыть">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <form id="editItemForm" class="modal-body">
+        <input type="hidden" id="editItemId">
+
+        <div class="form-group">
+          <label for="editTitle">Название материала или задачи <span class="req">*</span></label>
+          <input type="text" id="editTitle" required placeholder="Например: Книга 'Чистый Код'...">
+        </div>
+
+        <div class="form-group">
+          <label for="editFolderSelect">📁 Папка материала</label>
+          <select id="editFolderSelect" class="form-input">
+            <option value="">📁 Без папки (Корень)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label for="editType">Формат</label>
+            <select id="editType">
+              <option value="read">📖 Читать (книга, статья)</option>
+              <option value="watch">🎬 Смотреть (курс, лекция, видео)</option>
+              <option value="study">🧠 Изучать (навык, технология)</option>
+              <option value="do">⚡ Сделать (проект, практика)</option>
+            </select>
+          </div>
+
+          <div class="form-group col-6">
+            <label for="editPriority">Приоритет</label>
+            <select id="editPriority">
+              <option value="high">Высокий</option>
+              <option value="medium">Обычный (средний)</option>
+              <option value="low">Не к спеху</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-6">
+            <label for="editStatus">Текущий статус</label>
+            <select id="editStatus">
+              <option value="planned">В планах (бэклог)</option>
+              <option value="progress">В процессе / Частично</option>
+              <option value="done">Изучено / Завершено</option>
+            </select>
+          </div>
+
+          <div class="form-group col-6">
+            <label for="editRating">Оценка полезности (рейтинг)</label>
+            <div class="star-rating" id="editRatingStars">
+              <button type="button" class="star" data-rating="1">★</button>
+              <button type="button" class="star" data-rating="2">★</button>
+              <button type="button" class="star" data-rating="3">★</button>
+              <button type="button" class="star" data-rating="4">★</button>
+              <button type="button" class="star" data-rating="5">★</button>
+            </div>
+            <input type="hidden" id="editRating" value="0">
+          </div>
+        </div>
+
+        <!-- Детальный прогресс изучения -->
+        <div class="form-group progress-setting-box">
+          <div class="progress-setting-header">
+            <label for="editProgress">Прогресс освоения</label>
+            <span class="progress-val-bubble" id="editProgressLabel">0%</span>
+          </div>
+          <input type="range" id="editProgress" min="0" max="100" step="5" value="0" class="range-slider">
+          <div class="quick-progress-pills">
+            <button type="button" class="btn-micro" id="setProg0">0%</button>
+            <button type="button" class="btn-micro" id="setProg25">25%</button>
+            <button type="button" class="btn-micro" id="setProg50">50%</button>
+            <button type="button" class="btn-micro" id="setProg75">75%</button>
+            <button type="button" class="btn-micro" id="setProg100">100%</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editProgressNote">Текущая отметка (где вы остановились)</label>
+          <input type="text" id="editProgressNote" placeholder="Например: 'Глава 4', 'Серия 8 из 12', 'Остановился на 1:24:00'...">
+        </div>
+
+        <!-- Теги и категории материала -->
+        <div class="form-group modal-tags-group">
+          <label>Теги и категории материала</label>
+          <div class="modal-tags-container">
+            <div class="modal-selected-tags" id="editModalSelectedTags">
+              <!-- Выбранные теги с кнопкой удаления -->
+            </div>
+            <div class="modal-tag-input-row">
+              <input type="text" id="editCustomTagInput" placeholder="+ Добавить или создать свой тег (Enter)..." autocomplete="off">
+            </div>
+            <div class="modal-tag-presets-box">
+              <span class="preset-label">Подсказки для формата:</span>
+              <div class="modal-tag-presets" id="editModalTagPresets">
+                <!-- Подсказки по текущему формату -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editUrl">Ссылка на источник / материал (опционально)</label>
+          <input type="url" id="editUrl" placeholder="https://...">
+        </div>
+
+        <div class="form-group">
+          <label for="editNotes">Заметки, инсайты, ключевые выводы</label>
+          <textarea id="editNotes" rows="4" placeholder="Главные мысли, конспект или что именно нужно вынести из материала..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelModalBtn">Отмена</button>
+          <button type="submit" class="btn btn-primary" id="saveModalBtn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Всплывающие уведомления (Toast) -->
+  <div class="toast-container" id="toastContainer"></div>
+  <!-- Модальное окно: Приветствие / Создание или выбор базы (Onboarding) -->
+  <div class="modal-backdrop" id="welcomeModalBackdrop">
+    <div class="modal-dialog welcome-dialog">
+      <div class="modal-header welcome-header">
+        <div class="welcome-header-badge">
+          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png" class="apple-emoji" style="width: 28px; height: 28px;" alt="🧠">
+          <span>CORTEX</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeWelcomeModalBtn" title="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body welcome-body">
+        <div class="welcome-heading-group">
+          <h2 class="welcome-title">Добро пожаловать во Второй Мозг</h2>
+          <p class="welcome-subtitle">
+            CORTEX хранит ваши материалы, задачи и заметки локально на вашем компьютере в JSON-файле без внешних серверов и облаков.
+          </p>
+        </div>
+
+        <div class="welcome-actions-grid">
+          <!-- Опция 1: Создать новую базу -->
+          <button type="button" class="welcome-action-card" id="welcomeCreateNewBtn">
+            <div class="welcome-card-icon-wrap icon-create">
+              <span>➕</span>
+            </div>
+            <div class="welcome-card-content">
+              <div class="welcome-card-title">Создать новую базу</div>
+              <div class="welcome-card-desc">Создать чистый файл базы (например, cortex_db.json) на диске и начать собирать материалы с нуля</div>
+            </div>
+            <div class="welcome-card-arrow">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </button>
+
+          <!-- Опция 2: Выбрать существующую базу -->
+          <button type="button" class="welcome-action-card" id="welcomeChooseExistingBtn">
+            <div class="welcome-card-icon-wrap icon-open">
+              <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
+            </div>
+            <div class="welcome-card-content">
+              <div class="welcome-card-title">Выбрать существующую базу</div>
+              <div class="welcome-card-desc">Открыть уже имеющийся файл cortex_db.json или резервную копию со своего компьютера</div>
+            </div>
+            <div class="welcome-card-arrow">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </button>
+        </div>
+
+        <div class="welcome-footer">
+          <button type="button" class="btn-text-muted" id="welcomeSkipBtn">
+            Продолжить в браузере (создать или выбрать файл позже)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно: Подсказка для Brave и прямой записи без окон -->
+  <div class="modal-backdrop" id="braveNoticeModalBackdrop">
+    <div class="modal-dialog" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
+          Прямая запись без окон сохранения
+        </h3>
+        <button type="button" class="modal-close-btn" id="closeBraveNoticeModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" style="line-height: 1.6; font-size: 0.92rem; color: var(--text-secondary);">
+        <p style="margin-bottom: 12px;">
+          В браузере <strong>Brave</strong> прямая тихая перезапись файлов на диске по умолчанию отключена разработчиками браузера из соображений приватности.
+        </p>
+        <p style="margin-bottom: 14px;">
+          Чтобы кнопка <strong>«Сохранить»</strong> писала в файл в 1 клик <strong>без всплывающих окон</strong>:
+        </p>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px;">
+          <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">Способ 1 (Самый простой — без настроек):</div>
+          <div>Откройте эту страницу в <strong>Microsoft Edge</strong> или <strong>Chrome</strong> — там прямая запись на диск работает сразу «из коробки».</div>
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px;">
+          <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">Способ 2 (Включить прямую запись в Brave):</div>
+          <div>1. Откройте в новой вкладке адрес:</div>
+          <div style="background: var(--bg-canvas); padding: 6px 10px; border-radius: var(--radius-sm); font-family: monospace; font-size: 0.85rem; margin: 6px 0; color: var(--accent-warm); word-break: break-all;">
+            brave://flags/#file-system-access-api
+          </div>
+          <div>2. Переключите в <strong>Enabled</strong> и нажмите <strong>Relaunch</strong>.</div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="braveDownloadBackupBtn">
+            Скачать файл вручную
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="braveNoticeOkBtn">
+            Понятно
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно: Синхронизация с GitHub -->
+  <div class="modal-backdrop" id="githubModalBackdrop">
+    <div class="modal-dialog github-dialog" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Синхронизация с GitHub
+        </h3>
+        <button type="button" class="modal-close-btn" id="closeGithubModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" style="line-height: 1.5; font-size: 0.92rem;">
+        <!-- Баннер статуса -->
+        <div class="github-status-card" id="githubStatusCard">
+          <div class="github-status-indicator" id="githubStatusDot"></div>
+          <div class="github-status-info">
+            <div class="github-status-title" id="githubStatusTitle">Не подключено</div>
+            <div class="github-status-desc" id="githubStatusDesc">Синхронизируйте базу cortex_db.json с вашим личным репозиторием на GitHub</div>
+          </div>
+        </div>
+
+        <form id="githubConfigForm" onsubmit="event.preventDefault();">
+          <!-- Токен -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="ghTokenInput" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>GitHub Personal Access Token:</span>
+              <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" class="link-hint">Создать токен ↗</a>
+            </label>
+            <div class="password-input-wrapper">
+              <input type="password" id="ghTokenInput" class="form-input" placeholder="github_pat_... или ghp_..." autocomplete="off">
+              <button type="button" class="btn-toggle-password" id="ghToggleTokenBtn" title="Показать/скрыть токен">👁️</button>
+            </div>
+          </div>
+
+          <!-- Репозиторий -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="ghRepoInput" class="form-label">Репозиторий (username/repo):</label>
+            <input type="text" id="ghRepoInput" class="form-input" placeholder="например: alex/cortex-brain" autocomplete="off">
+          </div>
+
+          <!-- Ветка и путь к файлу -->
+          <div class="github-inputs-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+            <div class="form-group">
+              <label for="ghBranchInput" class="form-label">Ветка:</label>
+              <input type="text" id="ghBranchInput" class="form-input" value="main" placeholder="main">
+            </div>
+            <div class="form-group">
+              <label for="ghPathInput" class="form-label">Файл в репозитории:</label>
+              <input type="text" id="ghPathInput" class="form-input" value="cortex_db.json" placeholder="cortex_db.json">
+            </div>
+          </div>
+
+          <!-- Инструкция -->
+          <details class="github-instructions-details">
+            <summary>Инструкция: как создать токен за 1 минуту (бесплатно)</summary>
+            <div class="github-instructions-content">
+              <ol style="padding-left: 18px; margin: 8px 0; font-size: 0.83rem; color: var(--text-secondary); line-height: 1.55;">
+                <li>Создайте репозиторий на GitHub (можно <strong>Private</strong>), например <code>cortex-data</code>.</li>
+                <li>Перейдите в <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener noreferrer" style="color: var(--accent-warm); text-decoration: underline;">GitHub ➔ Settings ➔ Personal Access Tokens</a>.</li>
+                <li>Нажмите <strong>Generate new token</strong>, выберите репозиторий <code>cortex-data</code>.</li>
+                <li>В блоке <strong>Repository permissions</strong> выберите <strong>Contents: Read and write</strong>.</li>
+                <li>Скопируйте полученный токен и вставьте в поле выше.</li>
+              </ol>
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                🔒 <em>Токен сохраняется только в браузере (LocalStorage) и отправляется исключительно на официальный api.github.com по HTTPS.</em>
+              </div>
+            </div>
+          </details>
+        </form>
+      </div>
+      <div class="modal-footer github-modal-footer" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; align-items: center; padding: 16px 24px; border-top: 1px solid var(--border-subtle); flex-shrink: 0;">
+        <button type="button" class="btn btn-secondary btn-sm text-danger" id="ghDisconnectBtn" style="margin-right: auto; display: none;">
+          Отключить
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="ghSyncNowBtn" style="display: none;">
+          Синхронизировать сейчас
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" id="ghConnectBtn">
+          Проверить и сохранить
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно: Настройка источников и LLM-провайдера -->
+  <div class="modal-backdrop" id="newsSettingsModalBackdrop">
+    <div class="modal-dialog news-settings-dialog" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Настройки источников и LLM
+        </h3>
+        <button type="button" class="modal-close-btn" id="closeNewsSettingsModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" style="gap: 18px; line-height: 1.5; font-size: 0.92rem;">
+        <!-- Блок 1: Провайдер нейросети (LLM) -->
+        <div class="settings-section-card">
+          <div class="settings-section-header">
+            <h4>🧠 Нейросеть для суммаризации</h4>
+            <span class="settings-badge-free"><span class="badge-dot-green"></span>Бесплатные ключи</span>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label for="llmProviderSelect" class="form-label">Провайдер модели:</label>
+            <select id="llmProviderSelect" class="form-input">
+              <option value="gemini">Google Gemini 2.0 Flash (Бесплатно, 1М контекст)</option>
+              <option value="groq">Groq Llama 3.3 70B (Бесплатно, сверхбыстро)</option>
+              <option value="deepseek">DeepSeek-V3 (Максимальный интеллект, копейки)</option>
+              <option value="ollama">Локальная Ollama (100% оффлайн на вашем ПК)</option>
+              <option value="openai">OpenAI (GPT-4o-mini)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="llmKeyGroup" style="margin-bottom: 12px;">
+            <label for="llmApiKeyInput" class="form-label llm-key-label">
+              <span class="label-title">API Ключ:</span>
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="link-hint" id="llmKeyHintLink">Получить ключ Gemini ↗</a>
+            </label>
+            <div class="password-input-wrapper">
+              <input type="password" id="llmApiKeyInput" class="form-input" placeholder="AIzaSy... или gsk_..." autocomplete="off">
+              <button type="button" class="btn-toggle-password" id="toggleLlmKeyBtn">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="llmModelInput" class="form-label">Имя модели (или адрес Ollama):</label>
+            <input type="text" id="llmModelInput" class="form-input" value="gemini-2.0-flash">
+          </div>
+        </div>
+
+        <!-- Блок 2: Подключенные источники -->
+        <div class="settings-section-card">
+          <div class="settings-section-header">
+            <h4>📡 Подключенные каналы и RSS-ленты</h4>
+            <span id="sourcesCountBadge" class="sources-count-badge">8 источников</span>
+          </div>
+
+          <!-- Список существующих источников -->
+          <div class="sources-list-container" id="sourcesListContainer">
+            <!-- Рендерится через JS -->
+          </div>
+
+          <!-- Форма добавления нового источника -->
+          <div class="add-source-box">
+            <div class="add-source-title">Добавить свой сайт или Telegram-канал:</div>
+            <div class="add-source-grid">
+              <input type="text" id="newSourceNameInput" class="form-input" placeholder="Название (напр. Мой город)">
+              <select id="newSourceTypeSelect" class="form-input">
+                <option value="telegram">Telegram (@канал)</option>
+                <option value="rss">RSS лента</option>
+              </select>
+              <input type="text" id="newSourceUrlInput" class="form-input span-2" placeholder="@канал или https://.../rss">
+              <select id="newSourceCategorySelect" class="form-input">
+                <option value="main">Главное</option>
+                <option value="russia">Россия</option>
+                <option value="city">Город</option>
+                <option value="world">Мир</option>
+                <option value="tech">Технологии</option>
+                <option value="telegram">Telegram</option>
+              </select>
+              <button type="button" class="btn btn-secondary btn-sm" id="addSourceSubmitBtn" style="justify-content: center;">
+                <span>+ Добавить</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer news-modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="closeNewsSettingsFooterBtn">Отмена</button>
+        <button type="button" class="btn btn-primary btn-sm" id="saveNewsSettingsBtn">
+          <span class="btn-text-desktop">Сохранить настройки</span>
+          <span class="btn-text-mobile">Сохранить</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно: Создание / Редактирование папки -->
+  <div class="modal-backdrop" id="folderEditModalBackdrop">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="folderEditModalTitle" style="display: flex; align-items: center; gap: 8px;">
+          📁 Создать папку
+        </h3>
+        <button type="button" class="modal-close-btn" id="closeFolderEditModalBtn">&times;</button>
+      </div>
+      <form id="folderEditForm" class="modal-body" style="gap: 16px;">
+        <input type="hidden" id="folderEditId">
+        
+        <div class="form-group">
+          <label for="folderNameInput" class="form-label">Название папки <span class="req">*</span></label>
+          <input type="text" id="folderNameInput" class="form-input" required placeholder="Например: Фильмы про Человека-паука" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="folderParentSelect" class="form-label">Родительская папка (где создать)</label>
+          <select id="folderParentSelect" class="form-input">
+            <option value="">📁 Корень (верхний уровень)</option>
+            <!-- Заполняется динамически через JS -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Иконка / Эмодзи</label>
+          <div class="folder-icon-selector">
+            <input type="text" id="folderIconInput" class="form-input" value="📁" maxlength="4" style="width: 58px; text-align: center; font-size: 1.3rem;">
+            <div class="folder-icon-presets" id="folderIconPresets">
+              <button type="button" class="preset-icon-btn" data-icon="📁">📁</button>
+              <button type="button" class="preset-icon-btn" data-icon="🎬">🎬</button>
+              <button type="button" class="preset-icon-btn" data-icon="🕷️">🕷️</button>
+              <button type="button" class="preset-icon-btn" data-icon="📚">📚</button>
+              <button type="button" class="preset-icon-btn" data-icon="🧠">🧠</button>
+              <button type="button" class="preset-icon-btn" data-icon="⚡">⚡</button>
+              <button type="button" class="preset-icon-btn" data-icon="🍿">🍿</button>
+              <button type="button" class="preset-icon-btn" data-icon="🎮">🎮</button>
+              <button type="button" class="preset-icon-btn" data-icon="📌">📌</button>
+              <button type="button" class="preset-icon-btn" data-icon="💻">💻</button>
+              <button type="button" class="preset-icon-btn" data-icon="🎨">🎨</button>
+              <button type="button" class="preset-icon-btn" data-icon="🚀">🚀</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="padding: 14px 0 0 0; margin-top: 6px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-secondary" id="cancelFolderEditBtn">Отмена</button>
+          <button type="submit" class="btn btn-primary" id="saveFolderSubmitBtn">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

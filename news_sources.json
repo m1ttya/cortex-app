@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-09-04T12:00:00Z",
+  "sources": [
+    {
+      "id": "rbc-main",
+      "name": "РБК",
+      "type": "rss",
+      "url": "https://rssexport.rbc.ru/rbcnews/news/30/full.rss",
+      "category": "main",
+      "enabled": true
+    },
+    {
+      "id": "kommersant-news",
+      "name": "Коммерсантъ",
+      "type": "rss",
+      "url": "https://www.kommersant.ru/RSS/news.xml",
+      "category": "russia",
+      "enabled": true
+    },
+    {
+      "id": "tass-main",
+      "name": "ТАСС",
+      "type": "rss",
+      "url": "https://tass.ru/rss/v2.xml",
+      "category": "russia",
+      "enabled": true
+    },
+    {
+      "id": "habr-tech",
+      "name": "Хабр",
+      "type": "rss",
+      "url": "https://habr.com/ru/rss/all/all/",
+      "category": "tech",
+      "enabled": true
+    },
+    {
+      "id": "3dnews-tech",
+      "name": "3DNews",
+      "type": "rss",
+      "url": "https://3dnews.ru/news/rss/",
+      "category": "tech",
+      "enabled": true
+    },
+    {
+      "id": "tg-durov",
+      "name": "Durov's Channel",
+      "type": "telegram",
+      "url": "durov",
+      "category": "tech",
+      "enabled": true
+    },
+    {
+      "id": "tg-mash",
+      "name": "Mash",
+      "type": "telegram",
+      "url": "mash",
+      "category": "main",
+      "enabled": true
+    },
+    {
+      "id": "tg-rian",
+      "name": "РИА Новости",
+      "type": "telegram",
+      "url": "rian_ru",
+      "category": "russia",
+      "enabled": true
+    }
+  ]
+}
