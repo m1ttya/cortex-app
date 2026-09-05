@@ -418,10 +418,9 @@
         </div>
 
         <div class="news-action-buttons">
-          <button type="button" class="btn btn-secondary btn-sm" id="newsSettingsBtn" title="Настройка подключенных источников и LLM-провайдера">
+          <button type="button" class="btn btn-secondary btn-sm" id="newsSettingsBtn" title="Настройка подключенных источников новостей">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span class="btn-text-desktop">Источники и LLM</span>
-            <span class="btn-text-mobile">Источники</span>
+            <span>Источники</span>
           </button>
           <button type="button" class="btn btn-secondary btn-sm" id="newsRefreshBtn" title="Обновить сводку новостей">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
@@ -434,10 +433,6 @@
         <div class="search-input-wrapper">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input type="text" id="newsSearchInput" placeholder="Поиск по новостям и сюжетам..." autocomplete="off">
-        </div>
-        <div class="news-info-pill" id="newsInfoPill">
-          <span class="news-provider-indicator" id="newsProviderDot"></span>
-          <span id="newsProviderLabel">LLM: Gemini 2.0 Flash</span>
         </div>
       </div>
     </div>
@@ -861,56 +856,21 @@
     </div>
   </div>
 
-  <!-- Модальное окно: Настройка источников и LLM-провайдера -->
+  <!-- Модальное окно: Настройка источников новостей -->
   <div class="modal-backdrop" id="newsSettingsModalBackdrop">
     <div class="modal-dialog news-settings-dialog" style="max-width: 640px;">
       <div class="modal-header">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          Настройки источников и LLM
+          Источники новостей
         </h3>
         <button type="button" class="modal-close-btn" id="closeNewsSettingsModalBtn" title="Закрыть">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
       <div class="modal-body" style="gap: 18px; line-height: 1.5; font-size: 0.92rem;">
-        <!-- Блок 1: Провайдер нейросети (LLM) -->
-        <div class="settings-section-card">
-          <div class="settings-section-header">
-            <h4>🧠 Нейросеть для суммаризации</h4>
-            <span class="settings-badge-free"><span class="badge-dot-green"></span>Бесплатные ключи</span>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label for="llmProviderSelect" class="form-label">Провайдер модели:</label>
-            <select id="llmProviderSelect" class="form-input">
-              <option value="gemini">Google Gemini 2.0 Flash (Бесплатно, 1М контекст)</option>
-              <option value="groq">Groq Llama 3.3 70B (Бесплатно, сверхбыстро)</option>
-              <option value="deepseek">DeepSeek-V3 (Максимальный интеллект, копейки)</option>
-              <option value="ollama">Локальная Ollama (100% оффлайн на вашем ПК)</option>
-              <option value="openai">OpenAI (GPT-4o-mini)</option>
-            </select>
-          </div>
-
-          <div class="form-group" id="llmKeyGroup" style="margin-bottom: 12px;">
-            <label for="llmApiKeyInput" class="form-label llm-key-label">
-              <span class="label-title">API Ключ:</span>
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="link-hint" id="llmKeyHintLink">Получить ключ Gemini ↗</a>
-            </label>
-            <div class="password-input-wrapper">
-              <input type="password" id="llmApiKeyInput" class="form-input" placeholder="AIzaSy... или gsk_..." autocomplete="off">
-              <button type="button" class="btn-toggle-password" id="toggleLlmKeyBtn">👁️</button>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="llmModelInput" class="form-label">Имя модели (или адрес Ollama):</label>
-            <input type="text" id="llmModelInput" class="form-input" value="gemini-2.0-flash">
-          </div>
-        </div>
-
-        <!-- Блок 2: Подключенные источники -->
-        <div class="settings-section-card">
+        <!-- Подключенные источники -->
+        <div class="settings-section-card" style="margin-bottom: 0;">
           <div class="settings-section-header">
             <h4>📡 Подключенные каналы и RSS-ленты</h4>
             <span id="sourcesCountBadge" class="sources-count-badge">8 источников</span>
@@ -947,11 +907,7 @@
         </div>
       </div>
       <div class="modal-footer news-modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm" id="closeNewsSettingsFooterBtn">Отмена</button>
-        <button type="button" class="btn btn-primary btn-sm" id="saveNewsSettingsBtn">
-          <span class="btn-text-desktop">Сохранить настройки</span>
-          <span class="btn-text-mobile">Сохранить</span>
-        </button>
+        <button type="button" class="btn btn-primary btn-sm" id="closeNewsSettingsFooterBtn" style="margin-left: auto;">Готово</button>
       </div>
     </div>
   </div>

@@ -11,7 +11,7 @@ const IDB_STORE = 'handles';
 const IDB_KEY = 'cortex_db_file_handle';
 const LAST_DB_INFO_KEY = 'cortex_last_db_info_v1';
 const GITHUB_CONFIG_KEY = 'cortex_github_sync_config_v1';
-const NEWS_DIGEST_KEY = 'cortex_news_digest_v1';
+const NEWS_DIGEST_KEY = 'cortex_news_digest_v2';
 const NEWS_SOURCES_KEY = 'cortex_news_sources_v1';
 const LLM_CONFIG_KEY = 'cortex_llm_config_v1';
 
@@ -2032,8 +2032,9 @@ const newsManager = {
           title: 'Президент Аргентины пригрозил санкциями компаниям на Фолклендах',
           tldr: [
             'Президент Аргентины Хавьер Милей объявил о введении санкций и ужесточении наказания для иностранных компаний на спорных островах.',
-            'Власти планируют усилить мониторинг морских и шельфовых операций.'
+            'Власти планируют усилить мониторинг морских и шельфовых операций и блокировать финансовые транзакции нарушителей.'
           ],
+          fullText: 'Президент Аргентины Хавьер Милей подписал декрет, ужесточающий санкционный режим в отношении международных энергетических и рыболовных компаний, работающих в акватории Фолклендских (Мальвинских) островов без официального разрешения Буэнос-Айреса.\n\nВласти страны заявили о намерении блокировать любые финансовые активы и банковские транзакции компаний-нарушителей на территории Аргентины, а также лишать их права претендовать на участие в государственных тендерах и проектах освоения аргентинского континентального шельфа.\n\nВеликобритания и местная администрация островов воздерживаются от развернутых комментариев, однако ранее Лондон неоднократно подчеркивал суверенитет над архипелагом.',
           importance: 'high',
           time: 'Свежее',
           sources: [{ name: 'РБК', url: 'https://www.rbc.ru', type: 'rss' }]
@@ -2045,8 +2046,9 @@ const newsManager = {
           title: 'Релиз архитектуры DeepSeek-V3 и новые методы оптимизации внимания',
           tldr: [
             'Инженеры представили открытую модель со сжатием контекста и снижением задержек инференса.',
-            'Бенчмарки демонстрируют паритет с коммерческими проприетарными сетями.'
+            'Бенчмарки демонстрируют паритет с коммерческими проприетарными сетями при снижении себестоимости обучения.'
           ],
+          fullText: 'Исследовательская лаборатория DeepSeek представила открытую языковую модель DeepSeek-V3, основанную на архитектуре Mixture-of-Experts (MoE) с 671 миллиардом общих параметров, из которых на каждый токен активируется 37 миллиардов.\n\nКлючевым технологическим прорывом стало внедрение сжатия скрытых представлений в механизме внимания (Multi-head Latent Attention), что позволило в разы сократить размер кэша ключей и значений (KV Cache) и обеспечить эффективную генерацию ответов при длине контекста до 128 тысяч токенов.\n\nКоманда также применила механизм многотокенового предсказания (Multi-token Prediction), увеличивший пропускную способность генерации в полтора раза.',
           importance: 'high',
           time: '1 час назад',
           sources: [{ name: 'Хабр', url: 'https://habr.com', type: 'rss' }]
@@ -2057,9 +2059,10 @@ const newsManager = {
           categoryName: 'Telegram',
           title: 'Telegram расширил платформу мини-приложений и монетизацию для авторов',
           tldr: [
-            'Добавлены новые API для полноэкранного режима и бесшовных платежей.',
-            'Каналы получили расширенные инструменты аналитики аудитории.'
+            'Добавлены новые API для полноэкранного режима, доступа к акселерометру и бесшовных платежей.',
+            'Каналы получили расширенные инструменты аналитики аудитории и монетизации цифровых товаров.'
           ],
+          fullText: 'Основатель Telegram Павел Дуров представил крупный пакет обновлений для разработчиков и создателей каналов. Мини-приложения внутри мессенджера теперь могут использовать аппаратные возможности смартфонов: акселерометр, тактильный отклик и биометрию Face ID / Touch ID для подтверждения покупок.\n\nКроме того, каналы получили возможность устанавливать платные реакции и закрытые ветки обсуждений за внутреннюю валюту Stars, которую владельцы сообществ могут выводить через платформу Fragment с минимальными издержками.',
           importance: 'medium',
           time: '2 часа назад',
           sources: [{ name: "Durov's Channel", url: 'https://t.me/durov', type: 'telegram' }]
@@ -2071,13 +2074,22 @@ const newsManager = {
   },
 
   updateDigestMeta(data) {
-    const label = document.getElementById('newsProviderLabel');
-    if (label && data.provider) {
-      label.textContent = `LLM: ${data.provider}`;
-    }
     const badge = document.getElementById('newsCountBadge');
     if (badge) {
       badge.textContent = state.newsItems.length || 0;
+    }
+  },
+
+  toggleFullNews(newsId, btn) {
+    const card = document.querySelector(`.news-card[data-news-id="${newsId}"]`);
+    if (!card) return;
+    const isExpanded = card.classList.toggle('is-expanded');
+    if (btn) {
+      btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      const label = btn.querySelector('.expand-btn-text');
+      if (label) {
+        label.textContent = isExpanded ? 'Свернуть' : 'Читать полностью';
+      }
     }
   },
 
@@ -2099,8 +2111,9 @@ const newsManager = {
       items = items.filter(it => {
         const titleMatch = (it.title || '').toLowerCase().includes(q);
         const tldrMatch = Array.isArray(it.tldr) && it.tldr.some(t => t.toLowerCase().includes(q));
+        const fullTextMatch = (it.fullText || it.text || '').toLowerCase().includes(q);
         const srcMatch = Array.isArray(it.sources) && it.sources.some(s => s.name.toLowerCase().includes(q));
-        return titleMatch || tldrMatch || srcMatch;
+        return titleMatch || tldrMatch || fullTextMatch || srcMatch;
       });
     }
 
@@ -2137,6 +2150,12 @@ const newsManager = {
         ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
         : `<li>${escapeHtml(item.text || '')}</li>`;
 
+      const rawFullText = item.fullText || item.text || (Array.isArray(item.tldr) ? item.tldr.join('\n\n') : '');
+      const paragraphs = rawFullText ? rawFullText.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean) : [];
+      const paragraphsHtml = paragraphs.length > 0
+        ? paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')
+        : `<p>${escapeHtml(rawFullText)}</p>`;
+
       const sourcesHtml = Array.isArray(item.sources)
         ? item.sources.map(src => {
             const isTg = src.type === 'telegram';
@@ -2158,6 +2177,19 @@ const newsManager = {
           <ul class="news-tldr-list">
             ${tldrHtml}
           </ul>
+          <button type="button" class="news-expand-toggle-btn" onclick="newsManager.toggleFullNews('${escapeHtml(item.id)}', this)" aria-expanded="false" title="Раскрыть подробный текст новости">
+            <span class="expand-btn-text">Читать полностью</span>
+            <svg class="expand-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="news-full-text-wrapper" id="news-full-${escapeHtml(item.id)}">
+            <div class="news-full-text-content">
+              <div class="news-full-text-label">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Полный текст материала</span>
+              </div>
+              ${paragraphsHtml}
+            </div>
+          </div>
           <div class="news-card-footer">
             <div class="news-sources-group">
               ${sourcesHtml}
@@ -2178,7 +2210,16 @@ const newsManager = {
 
     const primaryUrl = (item.sources && item.sources[0]) ? item.sources[0].url : '';
     const bulletsText = Array.isArray(item.tldr) ? item.tldr.map(b => '• ' + b).join('\n') : '';
+    const fullText = item.fullText || item.text || '';
     const categoryName = item.categoryName || 'Новость';
+
+    let notesContent = `⚡ Ключевые тезисы из сводки:\n${bulletsText}`;
+    if (fullText && fullText.trim() !== bulletsText.trim()) {
+      notesContent += `\n\n📄 Полный текст:\n${fullText}`;
+    }
+    if (primaryUrl) {
+      notesContent += `\n\n🔗 Первоисточник: ${primaryUrl}`;
+    }
 
     const newItem = {
       id: 'item-' + Date.now(),
@@ -2188,7 +2229,7 @@ const newsManager = {
       progress: 0,
       priority: item.importance === 'high' ? 'high' : 'medium',
       url: primaryUrl,
-      notes: `⚡ Ключевые тезисы из сводки:\n${bulletsText}\n\nИсточник: ${primaryUrl}`,
+      notes: notesContent,
       tags: ['Новость', categoryName],
       createdAt: Date.now()
     };
@@ -2196,7 +2237,7 @@ const newsManager = {
     state.items.unshift(newItem);
     await saveData();
     renderApp();
-    showToast(`Материал сохранен во Второй Мозг!`, 'success');
+    showToast(`Материал сохранен в базу знаний!`, 'success');
   },
 
   async init() {
@@ -2249,24 +2290,13 @@ function setupNewsEvents() {
     });
   }
 
-  // Модальное окно настроек новостей и LLM
+  // Модальное окно настройки источников новостей
   const settingsModal = document.getElementById('newsSettingsModalBackdrop');
   const openSettingsBtn = document.getElementById('newsSettingsBtn');
   const closeSettingsBtn = document.getElementById('closeNewsSettingsModalBtn');
   const closeFooterBtn = document.getElementById('closeNewsSettingsFooterBtn');
-  const saveSettingsBtn = document.getElementById('saveNewsSettingsBtn');
-  const toggleKeyBtn = document.getElementById('toggleLlmKeyBtn');
-  const apiKeyInput = document.getElementById('llmApiKeyInput');
-  const providerSelect = document.getElementById('llmProviderSelect');
-  const modelInput = document.getElementById('llmModelInput');
-  const keyHintLink = document.getElementById('llmKeyHintLink');
 
   function openSettingsModal() {
-    newsManager.loadLlmConfig();
-    if (providerSelect) providerSelect.value = state.llmConfig.provider || 'gemini';
-    if (apiKeyInput) apiKeyInput.value = state.llmConfig.apiKey || '';
-    if (modelInput) modelInput.value = state.llmConfig.model || 'gemini-2.0-flash';
-    updateLlmHints();
     renderSourcesManager();
     if (settingsModal) settingsModal.classList.add('show');
   }
@@ -2275,67 +2305,12 @@ function setupNewsEvents() {
     if (settingsModal) settingsModal.classList.remove('show');
   }
 
-  function updateLlmHints() {
-    const prov = providerSelect ? providerSelect.value : 'gemini';
-    if (keyHintLink) {
-      if (prov === 'gemini') {
-        keyHintLink.href = 'https://aistudio.google.com/app/apikey';
-        keyHintLink.textContent = 'Получить бесплатный ключ Gemini ↗';
-        keyHintLink.style.display = 'inline';
-        if (modelInput && (!modelInput.value || modelInput.value.includes('llama'))) modelInput.value = 'gemini-2.0-flash';
-      } else if (prov === 'groq') {
-        keyHintLink.href = 'https://console.groq.com/keys';
-        keyHintLink.textContent = 'Получить бесплатный ключ Groq ↗';
-        keyHintLink.style.display = 'inline';
-        if (modelInput && (!modelInput.value || modelInput.value.includes('gemini'))) modelInput.value = 'llama-3.3-70b-versatile';
-      } else if (prov === 'deepseek') {
-        keyHintLink.href = 'https://platform.deepseek.com/api_keys';
-        keyHintLink.textContent = 'Получить ключ DeepSeek ↗';
-        keyHintLink.style.display = 'inline';
-        if (modelInput) modelInput.value = 'deepseek-chat';
-      } else if (prov === 'ollama') {
-        keyHintLink.style.display = 'none';
-        if (modelInput) modelInput.value = 'http://localhost:11434/v1/chat/completions';
-      } else {
-        keyHintLink.href = 'https://platform.openai.com/api-keys';
-        keyHintLink.textContent = 'Ключ OpenAI ↗';
-        keyHintLink.style.display = 'inline';
-        if (modelInput) modelInput.value = 'gpt-4o-mini';
-      }
-    }
-  }
-
-  if (providerSelect) {
-    providerSelect.addEventListener('change', updateLlmHints);
-  }
-
-  if (toggleKeyBtn && apiKeyInput) {
-    toggleKeyBtn.addEventListener('click', () => {
-      const isPass = apiKeyInput.type === 'password';
-      apiKeyInput.type = isPass ? 'text' : 'password';
-      toggleKeyBtn.textContent = isPass ? '🔒' : '👁️';
-    });
-  }
-
   if (openSettingsBtn) openSettingsBtn.addEventListener('click', openSettingsModal);
   if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
   if (closeFooterBtn) closeFooterBtn.addEventListener('click', closeSettingsModal);
   if (settingsModal) {
     settingsModal.addEventListener('click', (e) => {
       if (e.target === settingsModal) closeSettingsModal();
-    });
-  }
-
-  if (saveSettingsBtn) {
-    saveSettingsBtn.addEventListener('click', () => {
-      newsManager.saveLlmConfig({
-        provider: providerSelect ? providerSelect.value : 'gemini',
-        apiKey: apiKeyInput ? apiKeyInput.value.trim() : '',
-        model: modelInput ? modelInput.value.trim() : 'gemini-2.0-flash'
-      });
-      newsManager.saveSources();
-      closeSettingsModal();
-      showToast('Настройки новостей и LLM сохранены', 'success');
     });
   }
 

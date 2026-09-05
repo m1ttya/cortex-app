@@ -59,7 +59,7 @@ def fetch_rss_items(source, max_items=5):
                         'category': category,
                         'url': link,
                         'title': title,
-                        'text': desc[:350],
+                        'text': desc.strip(),
                         'date': pub_date
                     })
     except Exception as e:
@@ -98,7 +98,7 @@ def fetch_telegram_items(source, max_posts=5):
                         'category': category,
                         'url': link,
                         'title': first_line,
-                        'text': text[:450],
+                        'text': text.strip(),
                         'date': dt_str
                     })
     except Exception as e:
@@ -158,11 +158,10 @@ def call_openai_compatible_api(api_url, api_key, model_name, prompt):
         return json.loads(raw_text)
 
 def mock_llm_summarize(raw_items):
-    """Фолбэк-обработка без API ключа (для локального тестирования и старта с нуля)"""
-    print("Используется базовый режим суммаризации (без внешнего ключа LLM)...")
+    """Фолбэк-обработка без API ключа (для локального тестирования и работы с источниками)"""
+    print("Используется сборка сводки новостей по источникам...")
     digest = []
     
-    # Группируем по категории
     categories_map = {
         'main': 'Главное',
         'russia': 'Россия',
@@ -174,15 +173,23 @@ def mock_llm_summarize(raw_items):
     
     for idx, item in enumerate(raw_items[:12]):
         cat = item.get('category', 'main')
+        raw_text = item.get('text', '').strip()
+        
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', raw_text) if len(s.strip()) > 15]
+        if len(sentences) >= 2:
+            tldr = sentences[:2]
+        elif sentences:
+            tldr = [sentences[0]]
+        else:
+            tldr = [item.get('title', 'Новость')]
+            
         digest.append({
-            'id': f"digest-mock-{idx+1}",
+            'id': f"digest-item-{idx+1}",
             'category': cat,
             'categoryName': categories_map.get(cat, 'Главное'),
             'title': item.get('title', 'Новость без заголовка'),
-            'tldr': [
-                item.get('text', '')[:120] + '...',
-                'Первоисточник события зафиксирован в новостной ленте.'
-            ],
+            'tldr': tldr,
+            'fullText': raw_text,
             'importance': 'high' if idx < 3 else 'normal',
             'time': 'Свежее',
             'sources': [{
