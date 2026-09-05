@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CORTEX — Персональный Второй Мозг</title>
+  <title>CORTEX – Персональный Второй Мозг</title>
   <meta name="description" content="Минималистичный и мощный персональный центр знаний, бэклога и трекинга изучения материалов">
   <meta name="theme-color" content="#121316">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="CORTEX">
-  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/160/1f9e0.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="160x160" href="favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -881,9 +883,39 @@
             <!-- Рендерится через JS -->
           </div>
 
+          <!-- Панель управления источниками: экспорт, импорт, сброс -->
+          <div class="sources-toolbar">
+            <button type="button" class="btn-sources-tool" id="exportSourcesBtn" title="Скачать список источников в файл JSON для парсера">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Экспорт JSON</span>
+            </button>
+            <label class="btn-sources-tool" title="Загрузить источники из файла JSON">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Импорт</span>
+              <input type="file" id="importSourcesFileInput" accept=".json" style="display: none;">
+            </label>
+            <button type="button" class="btn-sources-tool btn-sources-reset" id="resetSourcesBtn" title="Восстановить исходные источники по умолчанию">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+              <span>Сброс</span>
+            </button>
+          </div>
+
+          <!-- Инфо-карточка: как источники обрабатываются LLM -->
+          <div class="sources-llm-explainer">
+            <div class="explainer-header">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Как LLM видит и обрабатывает эти источники:</span>
+            </div>
+            <div class="explainer-content">
+              1. <b>Сбор публикаций:</b> скрипт-агрегатор считывает последние посты из подключенных Telegram-каналов и RSS-лент.<br>
+              2. <b>Нейросеть (LLM):</b> получает массив сырых постов, удаляет кликбейт и воду, группирует одно и то же событие из нескольких источников в единый сюжет и составляет краткую выжимку с прямыми ссылками на посты.<br>
+              3. <b>Где хранятся:</b> ваши источники сохраняются в памяти браузера, в файле базы CORTEX (синхронизируются при экспорте/GitHub) и могут быть выгружены в <code>news_sources.json</code>.
+            </div>
+          </div>
+
           <!-- Форма добавления нового источника -->
           <div class="add-source-box">
-            <div class="add-source-title">Добавить свой сайт или Telegram-канал:</div>
+            <div class="add-source-title">Добавить свой Telegram-канал или RSS-ленту:</div>
             <div class="add-source-grid">
               <input type="text" id="newSourceNameInput" class="form-input" placeholder="Название (напр. Мой город)">
               <select id="newSourceTypeSelect" class="form-input">

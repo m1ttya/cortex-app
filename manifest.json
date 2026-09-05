@@ -1,5 +1,5 @@
 {
-  "name": "CORTEX — Второй Мозг",
+  "name": "CORTEX – Второй Мозг",
   "short_name": "CORTEX",
   "description": "Персональная база знаний, бэклог и сводка новостей с LLM",
   "start_url": "./index.html",
@@ -9,13 +9,13 @@
   "theme_color": "#121316",
   "icons": [
     {
-      "src": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/160/1f9e0.png",
+      "src": "apple-touch-icon.png",
       "sizes": "160x160",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f9e0.png",
+      "src": "favicon.png",
       "sizes": "64x64",
       "type": "image/png"
     }

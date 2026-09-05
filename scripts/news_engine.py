@@ -204,14 +204,33 @@ def mock_llm_summarize(raw_items):
 def main():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Запуск сбора новостей CORTEX...")
     
-    if not os.path.exists(SOURCES_FILE):
+    sources = []
+    if os.path.exists(SOURCES_FILE):
+        try:
+            with open(SOURCES_FILE, 'r', encoding='utf-8') as f:
+                sources_cfg = json.load(f)
+                sources.extend(sources_cfg.get('sources', []))
+        except Exception as e:
+            print(f"[Warning] Ошибка чтения {SOURCES_FILE}: {e}")
+    else:
         print(f"Файл источников не найден: {SOURCES_FILE}")
-        sys.exit(1)
-        
-    with open(SOURCES_FILE, 'r', encoding='utf-8') as f:
-        sources_cfg = json.load(f)
-        
-    sources = sources_cfg.get('sources', [])
+
+    # Также подтягиваем пользовательские источники из cortex_db.json, если они там сохранены
+    db_file = os.path.join(os.path.dirname(__file__), '..', 'cortex_db.json')
+    if os.path.exists(db_file):
+        try:
+            with open(db_file, 'r', encoding='utf-8') as f:
+                db_data = json.load(f)
+                custom = db_data.get('customNewsSources', [])
+                if isinstance(custom, list) and custom:
+                    existing_urls = {s.get('url') for s in sources}
+                    for cs in custom:
+                        if cs.get('url') not in existing_urls and cs.get('enabled', True):
+                            sources.append(cs)
+                            print(f"[Пользовательский источник] Подключен: {cs.get('name')} ({cs.get('url')})")
+        except Exception as e:
+            print(f"[Notice] Проверка cortex_db.json: {e}")
+
     raw_news = []
     
     for s in sources:

@@ -1944,25 +1944,97 @@ const newsManager = {
   ],
 
   loadSources() {
+    let sources = null;
     try {
       const stored = localStorage.getItem(NEWS_SOURCES_KEY);
       if (stored) {
-        state.newsSources = JSON.parse(stored);
-        return;
+        sources = JSON.parse(stored);
       }
     } catch (e) {
       console.warn('Ошибка чтения источников из localStorage:', e);
     }
-    state.newsSources = [...this.defaultSources];
-    this.saveSources();
+
+    // Если в localStorage нет, но есть в cortex_db
+    if (!sources && state._extraDbData && Array.isArray(state._extraDbData.customNewsSources)) {
+      sources = [...this.defaultSources, ...state._extraDbData.customNewsSources];
+    }
+
+    if (sources && Array.isArray(sources) && sources.length > 0) {
+      state.newsSources = sources;
+    } else {
+      state.newsSources = [...this.defaultSources];
+      this.saveSources();
+    }
   },
 
   saveSources() {
     try {
       localStorage.setItem(NEWS_SOURCES_KEY, JSON.stringify(state.newsSources));
+      // Синхронизируем также в файл базы данных cortex_db.json / GitHub
+      if (!state._extraDbData) state._extraDbData = {};
+      const customList = (state.newsSources || []).filter(s => s.custom || !this.defaultSources.some(ds => ds.id === s.id));
+      state._extraDbData.customNewsSources = customList;
+      saveData();
     } catch (e) {
       console.error('Ошибка сохранения источников:', e);
     }
+  },
+
+  exportSources() {
+    const data = {
+      version: '1.0',
+      updatedAt: new Date().toISOString(),
+      sources: state.newsSources || []
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'news_sources.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Список источников экспортирован в news_sources.json', 'success');
+  },
+
+  importSources(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target.result);
+        const imported = Array.isArray(json) ? json : (json.sources || []);
+        if (!Array.isArray(imported) || imported.length === 0) {
+          showToast('В файле не найдены корректные источники', 'warning');
+          return;
+        }
+        const valid = imported.filter(s => s && s.name && s.url).map(s => ({
+          id: s.id || ('src-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4)),
+          name: String(s.name).trim(),
+          type: s.type === 'rss' ? 'rss' : 'telegram',
+          url: String(s.url).trim(),
+          category: s.category || 'main',
+          enabled: s.enabled !== false,
+          custom: true
+        }));
+
+        state.newsSources = valid;
+        this.saveSources();
+        renderSourcesManager();
+        showToast(`Импортировано источников: ${valid.length}`, 'success');
+      } catch (err) {
+        showToast('Ошибка чтения JSON файла: ' + err.message, 'error');
+      }
+    };
+    reader.readAsText(file);
+  },
+
+  resetSources() {
+    state.newsSources = [...this.defaultSources];
+    this.saveSources();
+    renderSourcesManager();
+    showToast('Источники сброшены к стандартным', 'info');
   },
 
   loadLlmConfig() {
@@ -2292,6 +2364,32 @@ function setupNewsEvents() {
     });
   }
 
+  // Кнопки панели управления источниками (экспорт, импорт, сброс)
+  const exportBtn = document.getElementById('exportSourcesBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => newsManager.exportSources());
+  }
+
+  const importInput = document.getElementById('importSourcesFileInput');
+  if (importInput) {
+    importInput.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        newsManager.importSources(file);
+        importInput.value = '';
+      }
+    });
+  }
+
+  const resetBtn = document.getElementById('resetSourcesBtn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Восстановить базовый список источников? Добавленные вручную каналы будут сброшены.')) {
+        newsManager.resetSources();
+      }
+    });
+  }
+
   // Добавление нового источника
   const addSourceBtn = document.getElementById('addSourceSubmitBtn');
   if (addSourceBtn) {
@@ -2312,7 +2410,11 @@ function setupNewsEvents() {
       }
 
       if (type === 'telegram') {
-        url = url.replace('@', '').replace('https://t.me/', '').replace('/', '');
+        url = url.replace(/^https?:\/\/(www\.)?t\.me\/(s\/)?/, '').replace(/^@/, '').replace(/\/.*$/, '').trim();
+      } else if (type === 'rss') {
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
       }
 
       const newSrc = {
@@ -2321,7 +2423,8 @@ function setupNewsEvents() {
         type: type,
         url: url,
         category: category,
-        enabled: true
+        enabled: true,
+        custom: true
       };
 
       state.newsSources.push(newSrc);
@@ -2348,17 +2451,23 @@ function renderSourcesManager() {
     return;
   }
 
+  const defaultIds = new Set((newsManager.defaultSources || []).map(ds => ds.id));
+
   container.innerHTML = sources.map((s) => {
+    const isCustom = s.custom || !defaultIds.has(s.id);
     const icon = s.type === 'telegram'
       ? `<svg class="tg-svg-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" style="vertical-align: -3px;"><circle cx="12" cy="12" r="12" fill="#24A1DE"/><path fill="#fff" d="M5.41 12.08L16.27 7.5c.5-.2.96.12.8.68l-1.85 8.72c-.14.63-.51.78-1.04.49l-2.82-2.08-1.36 1.31c-.15.15-.28.28-.57.28l.2-2.88 5.24-4.73c.23-.2-.05-.32-.36-.11l-6.48 4.08-2.8-.87c-.61-.19-.62-.61.13-.9z"/></svg>`
       : '📰';
     const isChecked = s.enabled ? 'checked' : '';
+    const customBadgeHtml = isCustom ? '<span class="source-item-custom-badge">Пользовательский</span>' : '';
+
     return `
       <div class="source-item-row" data-source-id="${escapeHtml(s.id)}">
         <div class="source-item-info">
           <span class="source-item-icon">${icon}</span>
           <span class="source-item-name" title="${escapeHtml(s.url)}">${escapeHtml(s.name)}</span>
           <span class="source-item-tag">${escapeHtml(s.category)}</span>
+          ${customBadgeHtml}
         </div>
         <div class="source-item-actions">
           <label style="margin: 0; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.78rem; color: var(--text-muted);">
