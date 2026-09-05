@@ -2229,6 +2229,97 @@ select.form-input:hover {
   box-shadow: none !important;
 }
 
+/* GitHub Modal Footer */
+.github-modal-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 16px 22px !important;
+  border-top: 1px solid var(--border-subtle) !important;
+  margin-top: 0 !important;
+  background: var(--bg-card-solid);
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.github-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.github-modal-footer .btn {
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  line-height: 38px !important;
+  padding: 0 16px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  border-radius: var(--radius-md) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.github-modal-footer #ghDisconnectBtn {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  color: #f87171 !important;
+}
+
+.github-modal-footer #ghDisconnectBtn:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.github-modal-footer #ghSyncNowBtn {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+}
+
+.github-modal-footer #ghSyncNowBtn:hover {
+  background: var(--bg-card-hover) !important;
+  border-color: var(--border-color) !important;
+}
+
+@media (max-width: 520px) {
+  .github-modal-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 12px 14px !important;
+  }
+  .github-footer-actions {
+    width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+  .github-footer-actions .btn {
+    flex: 1 1 50% !important;
+    justify-content: center !important;
+    padding: 0 8px !important;
+    font-size: 0.8rem !important;
+    height: 38px !important;
+    white-space: nowrap !important;
+  }
+  .github-modal-footer #ghDisconnectBtn {
+    width: 100% !important;
+    justify-content: center !important;
+    height: 34px !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+
+
 /* ==========================================================================
    Приветственное модальное окно (Онбординг / Создание или выбор базы)
    ========================================================================== */
@@ -2386,7 +2477,7 @@ select.form-input:hover {
 }
 
 /* ==========================================================================
-   Toast уведомления
+   Toast уведомления (Гарантированно выше любых модальных окон)
    ========================================================================== */
 .toast-container {
   position: fixed;
@@ -2395,21 +2486,26 @@ select.form-input:hover {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  z-index: 1000;
+  z-index: 99999999 !important; /* Выше любого модального окна и бэкдропа */
+  pointer-events: none;
 }
 
 .toast {
   background: var(--bg-card-solid);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(124, 58, 237, 0.25);
   color: var(--text-primary);
   padding: 12px 18px;
   border-radius: var(--radius-md);
   font-size: 0.9rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 12px;
   animation: slideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 @keyframes slideIn {
@@ -3645,14 +3741,22 @@ select.form-input:hover {
     justify-content: center;
   }
 
-  /* Всплывающие уведомления */
+  /* Всплывающие уведомления на мобильных (вверху экрана, чтобы не перекрывать кнопки модалок) */
+  .toast-container {
+    top: 18px !important;
+    bottom: auto !important;
+    left: 14px !important;
+    right: 14px !important;
+    align-items: center !important;
+  }
+
   .toast {
-    left: 12px;
-    right: 12px;
-    transform: none;
-    min-width: 0;
-    width: auto;
-    bottom: 14px;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
   }
 }
 
