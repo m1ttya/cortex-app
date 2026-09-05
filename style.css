@@ -2333,11 +2333,16 @@ select.form-input:hover {
   border-radius: var(--radius-sm) !important;
   margin-left: auto !important;
   flex-shrink: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  cursor: pointer !important;
-  transition: var(--transition) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.github-status-card #ghDisconnectBtn[style*="display: none"],
+#ghDisconnectBtn[style*="display: none"] {
+  display: none !important;
 }
 
 .github-status-card #ghDisconnectBtn:hover {
