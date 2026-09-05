@@ -2031,13 +2031,15 @@ const newsManager = {
           categoryName: 'Главное',
           title: 'Президент Аргентины пригрозил санкциями компаниям на Фолклендах',
           tldr: [
-            'Президент Аргентины Хавьер Милей объявил о введении санкций и ужесточении наказания для иностранных компаний на спорных островах.',
-            'Власти планируют усилить мониторинг морских и шельфовых операций и блокировать финансовые транзакции нарушителей.'
+            'Президент Аргентины Хавьер Милей объявил о введении жестких санкций против иностранных корпораций, ведущих добычу на шельфе Фолклендских островов без согласия Буэнос-Айреса.',
+            'Указ предусматривает арест счетов, запрет на любые коммерческие операции в стране и лишение лицензий на шельфовые проекты.'
           ],
-          fullText: 'Президент Аргентины Хавьер Милей подписал декрет, ужесточающий санкционный режим в отношении международных энергетических и рыболовных компаний, работающих в акватории Фолклендских (Мальвинских) островов без официального разрешения Буэнос-Айреса.\n\nВласти страны заявили о намерении блокировать любые финансовые активы и банковские транзакции компаний-нарушителей на территории Аргентины, а также лишать их права претендовать на участие в государственных тендерах и проектах освоения аргентинского континентального шельфа.\n\nВеликобритания и местная администрация островов воздерживаются от развернутых комментариев, однако ранее Лондон неоднократно подчеркивал суверенитет над архипелагом.',
           importance: 'high',
           time: 'Свежее',
-          sources: [{ name: 'РБК', url: 'https://www.rbc.ru', type: 'rss' }]
+          sources: [
+            { name: 'РБК', url: 'https://www.rbc.ru/rbcfreenews/6a9abdba5c85bd2adebcdc93', type: 'rss' },
+            { name: 'Коммерсантъ', url: 'https://www.kommersant.ru', type: 'rss' }
+          ]
         },
         {
           id: 'digest-demo-2',
@@ -2045,13 +2047,15 @@ const newsManager = {
           categoryName: 'Технологии',
           title: 'Релиз архитектуры DeepSeek-V3 и новые методы оптимизации внимания',
           tldr: [
-            'Инженеры представили открытую модель со сжатием контекста и снижением задержек инференса.',
-            'Бенчмарки демонстрируют паритет с коммерческими проприетарными сетями при снижении себестоимости обучения.'
+            'Инженеры представили открытую модель MoE на 671 млрд параметров со сжатием скрытых представлений внимания (MLA), снижающим объем кэша KV в несколько раз.',
+            'Бенчмарки демонстрируют паритет с коммерческими проприетарными сетями при существенном снижении затрат на обучение и инференс.'
           ],
-          fullText: 'Исследовательская лаборатория DeepSeek представила открытую языковую модель DeepSeek-V3, основанную на архитектуре Mixture-of-Experts (MoE) с 671 миллиардом общих параметров, из которых на каждый токен активируется 37 миллиардов.\n\nКлючевым технологическим прорывом стало внедрение сжатия скрытых представлений в механизме внимания (Multi-head Latent Attention), что позволило в разы сократить размер кэша ключей и значений (KV Cache) и обеспечить эффективную генерацию ответов при длине контекста до 128 тысяч токенов.\n\nКоманда также применила механизм многотокенового предсказания (Multi-token Prediction), увеличивший пропускную способность генерации в полтора раза.',
           importance: 'high',
           time: '1 час назад',
-          sources: [{ name: 'Хабр', url: 'https://habr.com', type: 'rss' }]
+          sources: [
+            { name: 'Хабр', url: 'https://habr.com', type: 'rss' },
+            { name: 'Telegram Info', url: 'https://t.me/tginfo', type: 'telegram' }
+          ]
         },
         {
           id: 'digest-demo-3',
@@ -2059,13 +2063,14 @@ const newsManager = {
           categoryName: 'Telegram',
           title: 'Telegram расширил платформу мини-приложений и монетизацию для авторов',
           tldr: [
-            'Добавлены новые API для полноэкранного режима, доступа к акселерометру и бесшовных платежей.',
-            'Каналы получили расширенные инструменты аналитики аудитории и монетизации цифровых товаров.'
+            'Добавлены новые API для полноэкранного режима, доступа к аппаратному виброотклику и бесшовных платежей через Face ID / Touch ID.',
+            'Каналы получили расширенные инструменты аналитики аудитории и монетизации цифровых товаров за внутреннюю валюту Stars.'
           ],
-          fullText: 'Основатель Telegram Павел Дуров представил крупный пакет обновлений для разработчиков и создателей каналов. Мини-приложения внутри мессенджера теперь могут использовать аппаратные возможности смартфонов: акселерометр, тактильный отклик и биометрию Face ID / Touch ID для подтверждения покупок.\n\nКроме того, каналы получили возможность устанавливать платные реакции и закрытые ветки обсуждений за внутреннюю валюту Stars, которую владельцы сообществ могут выводить через платформу Fragment с минимальными издержками.',
           importance: 'medium',
           time: '2 часа назад',
-          sources: [{ name: "Durov's Channel", url: 'https://t.me/durov', type: 'telegram' }]
+          sources: [
+            { name: "Durov's Channel", url: 'https://t.me/durov', type: 'telegram' }
+          ]
         }
       ];
     }
@@ -2077,19 +2082,6 @@ const newsManager = {
     const badge = document.getElementById('newsCountBadge');
     if (badge) {
       badge.textContent = state.newsItems.length || 0;
-    }
-  },
-
-  toggleFullNews(newsId, btn) {
-    const card = document.querySelector(`.news-card[data-news-id="${newsId}"]`);
-    if (!card) return;
-    const isExpanded = card.classList.toggle('is-expanded');
-    if (btn) {
-      btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-      const label = btn.querySelector('.expand-btn-text');
-      if (label) {
-        label.textContent = isExpanded ? 'Свернуть' : 'Читать полностью';
-      }
     }
   },
 
@@ -2111,9 +2103,8 @@ const newsManager = {
       items = items.filter(it => {
         const titleMatch = (it.title || '').toLowerCase().includes(q);
         const tldrMatch = Array.isArray(it.tldr) && it.tldr.some(t => t.toLowerCase().includes(q));
-        const fullTextMatch = (it.fullText || it.text || '').toLowerCase().includes(q);
         const srcMatch = Array.isArray(it.sources) && it.sources.some(s => s.name.toLowerCase().includes(q));
-        return titleMatch || tldrMatch || fullTextMatch || srcMatch;
+        return titleMatch || tldrMatch || srcMatch;
       });
     }
 
@@ -2150,12 +2141,6 @@ const newsManager = {
         ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
         : `<li>${escapeHtml(item.text || '')}</li>`;
 
-      const rawFullText = item.fullText || item.text || (Array.isArray(item.tldr) ? item.tldr.join('\n\n') : '');
-      const paragraphs = rawFullText ? rawFullText.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean) : [];
-      const paragraphsHtml = paragraphs.length > 0
-        ? paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')
-        : `<p>${escapeHtml(rawFullText)}</p>`;
-
       const sourcesHtml = Array.isArray(item.sources)
         ? item.sources.map(src => {
             const isTg = src.type === 'telegram';
@@ -2177,24 +2162,11 @@ const newsManager = {
           <ul class="news-tldr-list">
             ${tldrHtml}
           </ul>
-          <button type="button" class="news-expand-toggle-btn" onclick="newsManager.toggleFullNews('${escapeHtml(item.id)}', this)" aria-expanded="false" title="Раскрыть подробный текст новости">
-            <span class="expand-btn-text">Читать полностью</span>
-            <svg class="expand-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-          <div class="news-full-text-wrapper" id="news-full-${escapeHtml(item.id)}">
-            <div class="news-full-text-content">
-              <div class="news-full-text-label">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                <span>Полный текст материала</span>
-              </div>
-              ${paragraphsHtml}
-            </div>
-          </div>
           <div class="news-card-footer">
             <div class="news-sources-group">
               ${sourcesHtml}
             </div>
-            <button type="button" class="btn-save-to-brain" onclick="newsManager.saveToBrain('${escapeHtml(item.id)}')" title="Сохранить эту новость/материал в личную базу знаний">
+            <button type="button" class="btn-save-to-brain" onclick="newsManager.saveToBrain('${escapeHtml(item.id)}')" title="Сохранить эту выжимку в личную базу знаний">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               <span>В базу знаний</span>
             </button>
@@ -2209,17 +2181,11 @@ const newsManager = {
     if (!item) return;
 
     const primaryUrl = (item.sources && item.sources[0]) ? item.sources[0].url : '';
-    const bulletsText = Array.isArray(item.tldr) ? item.tldr.map(b => '• ' + b).join('\n') : '';
-    const fullText = item.fullText || item.text || '';
+    const bulletsText = Array.isArray(item.tldr) ? item.tldr.map(b => '• ' + b).join('\n') : (item.text || '');
+    const sourcesText = Array.isArray(item.sources)
+      ? item.sources.map(s => `• ${s.name}: ${s.url}`).join('\n')
+      : '';
     const categoryName = item.categoryName || 'Новость';
-
-    let notesContent = `⚡ Ключевые тезисы из сводки:\n${bulletsText}`;
-    if (fullText && fullText.trim() !== bulletsText.trim()) {
-      notesContent += `\n\n📄 Полный текст:\n${fullText}`;
-    }
-    if (primaryUrl) {
-      notesContent += `\n\n🔗 Первоисточник: ${primaryUrl}`;
-    }
 
     const newItem = {
       id: 'item-' + Date.now(),
@@ -2229,7 +2195,7 @@ const newsManager = {
       progress: 0,
       priority: item.importance === 'high' ? 'high' : 'medium',
       url: primaryUrl,
-      notes: notesContent,
+      notes: `⚡ Ключевые тезисы из сводки:\n${bulletsText}\n\n🔗 Источники:\n${sourcesText}`,
       tags: ['Новость', categoryName],
       createdAt: Date.now()
     };
