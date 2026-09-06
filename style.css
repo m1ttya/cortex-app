@@ -4175,6 +4175,14 @@ select.form-input:hover {
   color: var(--accent-warm);
 }
 
+.nav-title-desktop {
+  display: inline;
+}
+
+.nav-title-mobile {
+  display: none;
+}
+
 .nav-badge {
   display: inline-block;
   font-size: 0.75rem;
@@ -4223,8 +4231,13 @@ select.form-input:hover {
 .news-action-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.news-action-buttons #newsSettingsBtn {
+  border-radius: var(--radius-full);
 }
 
 .news-sync-status {
@@ -4788,16 +4801,117 @@ select.form-input:hover {
   display: none;
 }
 
-/* Мобильная адаптация для новостей */
+/* Мобильная адаптация для новостей и навигации */
 @media (max-width: 768px) {
+  /* Переключатель разделов: симметричный, ровный, без переносов */
+  .nav-title-desktop {
+    display: none !important;
+  }
+
+  .nav-title-mobile {
+    display: inline !important;
+  }
+
+  .main-section-nav {
+    width: 100% !important;
+    display: flex !important;
+    box-sizing: border-box !important;
+    padding: 4px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .main-section-nav .nav-section-btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+    height: 42px !important;
+    padding: 0 10px !important;
+    font-size: 0.88rem !important;
+    border-radius: var(--radius-full) !important;
+  }
+
+  .main-section-nav .nav-badge {
+    margin-left: 4px !important;
+    flex-shrink: 0 !important;
+  }
+
   .news-controls-card {
     padding: 12px 14px;
     gap: 12px;
   }
 
+  /* Сетка и карточки новостей — строго в пределах экрана */
   .news-grid-container {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    gap: 14px !important;
+  }
+
+  .news-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 16px 14px !important;
+    overflow: hidden !important;
+  }
+
+  .news-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .news-cat-badge {
+    flex-shrink: 0 !important;
+  }
+
+  .news-time {
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+    white-space: nowrap !important;
+    font-size: 0.74rem !important;
+  }
+
+  .news-title {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .news-tldr-list {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    padding-left: 16px !important;
+  }
+
+  .news-card-footer {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .news-sources-group {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .news-card-actions {
+    width: 100% !important;
+    display: flex !important;
+  }
+
+  .btn-save-to-brain {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+    height: 38px !important;
+    font-size: 0.82rem !important;
   }
 
   .news-search-row {
@@ -4828,36 +4942,33 @@ select.form-input:hover {
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Разделение кнопки источников и статуса обновления */
   .news-action-buttons {
     display: flex !important;
-    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     width: 100% !important;
-    gap: 8px !important;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .news-action-buttons #newsSettingsBtn {
+    flex: 0 0 auto !important;
+    height: 36px !important;
+    padding: 0 14px !important;
+    font-size: 0.82rem !important;
+    border-radius: var(--radius-full) !important;
   }
 
   .news-sync-status {
-    width: 100% !important;
-    justify-content: center !important;
-    order: -1 !important;
-    padding: 6px 12px !important;
-    font-size: 0.78rem !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    margin-left: auto !important;
+    order: 2 !important;
+    height: 34px !important;
+    padding: 0 12px !important;
+    font-size: 0.76rem !important;
     box-sizing: border-box !important;
-  }
-
-  .news-action-buttons .btn {
-    flex: 1 1 0 !important;
-    justify-content: center !important;
-    height: 38px !important;
-    font-size: 0.82rem !important;
-    padding: 0 10px !important;
-  }
-
-  .btn-text-desktop {
-    display: none;
-  }
-
-  .btn-text-mobile {
-    display: inline;
   }
 
   .news-info-pill {

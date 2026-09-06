@@ -231,6 +231,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.newsManager) {
     await newsManager.init();
   }
+
+  // Восстановление активного экрана (Второй мозг или Сводка новостей)
+  let initialSection = 'brain';
+  const currentHash = (window.location.hash || '').toLowerCase();
+  if (currentHash === '#news') {
+    initialSection = 'news';
+  } else if (currentHash === '#brain') {
+    initialSection = 'brain';
+  } else {
+    try {
+      const savedSection = localStorage.getItem('cortex_active_section');
+      if (savedSection === 'news' || savedSection === 'brain') {
+        initialSection = savedSection;
+      }
+    } catch (e) {}
+  }
+  switchSection(initialSection, true);
+
+  window.addEventListener('hashchange', () => {
+    const h = (window.location.hash || '').toLowerCase();
+    if (h === '#news' && state.currentSection !== 'news') {
+      switchSection('news', false);
+    } else if (h === '#brain' && state.currentSection !== 'brain') {
+      switchSection('brain', false);
+    }
+  });
 });
 
 // Коллекция тем оформления (6 выверенных темных тем + 1 светлая)
@@ -1909,8 +1935,23 @@ function setupGitHubEvents() {
 // Модуль: Сводка новостей и управление источниками (RSS + Telegram + LLM)
 // ==========================================================================
 
-function switchSection(sectionId) {
+function switchSection(sectionId, updateHash = true) {
   state.currentSection = sectionId;
+
+  try {
+    localStorage.setItem('cortex_active_section', sectionId);
+  } catch (e) {}
+
+  if (updateHash) {
+    const targetHash = sectionId === 'news' ? '#news' : '#brain';
+    if (window.location.hash !== targetHash) {
+      try {
+        history.replaceState(null, '', targetHash);
+      } catch (e) {
+        window.location.hash = targetHash;
+      }
+    }
+  }
 
   const brainBtn = document.getElementById('navBrainBtn');
   const newsBtn = document.getElementById('navNewsBtn');
@@ -2536,17 +2577,6 @@ function setupNewsEvents() {
     });
   }
 
-  // Кнопка обновления сводки
-  const refreshBtn = document.getElementById('newsRefreshBtn');
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', async () => {
-      refreshBtn.disabled = true;
-      showToast('Обновление сводки новостей...', 'info');
-      await newsManager.loadDigest();
-      refreshBtn.disabled = false;
-      showToast('Сводка новостей обновлена!', 'success');
-    });
-  }
 
   // Модальное окно настройки источников новостей
   const settingsModal = document.getElementById('newsSettingsModalBackdrop');
