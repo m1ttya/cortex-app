@@ -11,7 +11,7 @@ const IDB_STORE = 'handles';
 const IDB_KEY = 'cortex_db_file_handle';
 const LAST_DB_INFO_KEY = 'cortex_last_db_info_v1';
 const GITHUB_CONFIG_KEY = 'cortex_github_sync_config_v1';
-const NEWS_DIGEST_KEY = 'cortex_news_digest_v5';
+const NEWS_DIGEST_KEY = 'cortex_news_digest_v6';
 const NEWS_SOURCES_KEY = 'cortex_news_sources_v1';
 const LLM_CONFIG_KEY = 'cortex_llm_config_v1';
 
@@ -1931,6 +1931,113 @@ function switchSection(sectionId) {
   }
 }
 
+// ==========================================================================
+// Вспомогательные функции для времени и дат в новостях
+// ==========================================================================
+function ruPlural(n, one, two, five) {
+  const num = Math.abs(Number(n)) || 0;
+  const mod10 = num % 10;
+  const mod100 = num % 100;
+  if (mod100 >= 11 && mod100 <= 19) return five;
+  if (mod10 === 1) return one;
+  if (mod10 >= 2 && mod10 <= 4) return two;
+  return five;
+}
+
+function formatRelativeNewsTime(publishedAt, fallbackStr = 'Свежее') {
+  if (!publishedAt) return fallbackStr;
+  const pubDate = new Date(publishedAt);
+  if (isNaN(pubDate.getTime())) return fallbackStr;
+
+  const now = new Date();
+  const diffMs = now.getTime() - pubDate.getTime();
+
+  if (diffMs < 60 * 1000) {
+    return 'Только что';
+  }
+
+  // Меньше 1 часа
+  if (diffMs < 60 * 60 * 1000) {
+    const mins = Math.max(1, Math.floor(diffMs / (60 * 1000)));
+    return `${mins} ${ruPlural(mins, 'минуту', 'минуты', 'минут')} назад`;
+  }
+
+  // Тот же календарный день (сегодня)
+  const isToday = now.getDate() === pubDate.getDate() &&
+                  now.getMonth() === pubDate.getMonth() &&
+                  now.getFullYear() === pubDate.getFullYear();
+  if (isToday) {
+    const hours = Math.floor(diffMs / (60 * 60 * 1000));
+    return `${hours} ${ruPlural(hours, 'час', 'часа', 'часов')} назад`;
+  }
+
+  // Вчера
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = yesterday.getDate() === pubDate.getDate() &&
+                      yesterday.getMonth() === pubDate.getMonth() &&
+                      yesterday.getFullYear() === pubDate.getFullYear();
+
+  const hh = String(pubDate.getHours()).padStart(2, '0');
+  const mm = String(pubDate.getMinutes()).padStart(2, '0');
+
+  if (isYesterday) {
+    return `Вчера в ${hh}:${mm}`;
+  }
+
+  // До 7 дней назад
+  const monthsShort = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  return `${pubDate.getDate()} ${monthsShort[pubDate.getMonth()]}, ${hh}:${mm}`;
+}
+
+function getDayGroupInfo(publishedAt) {
+  if (!publishedAt) {
+    return { key: 'today', title: '🌟 Сегодня' };
+  }
+  const d = new Date(publishedAt);
+  if (isNaN(d.getTime())) {
+    return { key: 'today', title: '🌟 Сегодня' };
+  }
+
+  const now = new Date();
+  const isToday = now.getDate() === d.getDate() &&
+                  now.getMonth() === d.getMonth() &&
+                  now.getFullYear() === d.getFullYear();
+
+  const monthsFull = [
+    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+  ];
+  const weekdays = [
+    'воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'
+  ];
+
+  if (isToday) {
+    return {
+      key: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
+      title: `🌟 Сегодня, ${d.getDate()} ${monthsFull[d.getMonth()]}`
+    };
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = yesterday.getDate() === d.getDate() &&
+                      yesterday.getMonth() === d.getMonth() &&
+                      yesterday.getFullYear() === d.getFullYear();
+
+  if (isYesterday) {
+    return {
+      key: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
+      title: `📅 Вчера, ${d.getDate()} ${monthsFull[d.getMonth()]}`
+    };
+  }
+
+  return {
+    key: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
+    title: `🗓️ ${d.getDate()} ${monthsFull[d.getMonth()]}, ${weekdays[d.getDay()]}`
+  };
+}
+
 const newsManager = {
   defaultSources: [
     { id: 'rbc-main', name: 'РБК', type: 'rss', url: 'https://rssexport.rbc.ru/rbcnews/news/30/full.rss', category: 'main', enabled: true },
@@ -1943,98 +2050,46 @@ const newsManager = {
     { id: 'tg-rian', name: 'РИА Новости', type: 'telegram', url: 'rian_ru', category: 'russia', enabled: true }
   ],
 
-  loadSources() {
-    let sources = null;
+  async loadSources() {
+    let savedPrefs = {};
     try {
       const stored = localStorage.getItem(NEWS_SOURCES_KEY);
       if (stored) {
-        sources = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          parsed.forEach(s => { if (s && s.id) savedPrefs[s.id] = s.enabled; });
+        }
       }
     } catch (e) {
       console.warn('Ошибка чтения источников из localStorage:', e);
     }
 
-    // Если в localStorage нет, но есть в cortex_db
-    if (!sources && state._extraDbData && Array.isArray(state._extraDbData.customNewsSources)) {
-      sources = [...this.defaultSources, ...state._extraDbData.customNewsSources];
+    // Пробуем подгрузить скомпилированный news_sources.json
+    let list = [...this.defaultSources];
+    try {
+      const res = await fetch('news_sources.json', { cache: 'no-cache' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.sources) && data.sources.length > 0) {
+          list = data.sources;
+        }
+      }
+    } catch (err) {
+      // Игнорируем сетевые ошибки, оставаясь на defaultSources
     }
 
-    if (sources && Array.isArray(sources) && sources.length > 0) {
-      state.newsSources = sources;
-    } else {
-      state.newsSources = [...this.defaultSources];
-      this.saveSources();
-    }
+    state.newsSources = list.map(s => ({
+      ...s,
+      enabled: savedPrefs[s.id] !== undefined ? savedPrefs[s.id] : (s.enabled !== false)
+    }));
   },
 
   saveSources() {
     try {
       localStorage.setItem(NEWS_SOURCES_KEY, JSON.stringify(state.newsSources));
-      // Синхронизируем также в файл базы данных cortex_db.json / GitHub
-      if (!state._extraDbData) state._extraDbData = {};
-      const customList = (state.newsSources || []).filter(s => s.custom || !this.defaultSources.some(ds => ds.id === s.id));
-      state._extraDbData.customNewsSources = customList;
-      saveData();
     } catch (e) {
       console.error('Ошибка сохранения источников:', e);
     }
-  },
-
-  exportSources() {
-    const data = {
-      version: '1.0',
-      updatedAt: new Date().toISOString(),
-      sources: state.newsSources || []
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'news_sources.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Список источников экспортирован в news_sources.json', 'success');
-  },
-
-  importSources(file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const json = JSON.parse(e.target.result);
-        const imported = Array.isArray(json) ? json : (json.sources || []);
-        if (!Array.isArray(imported) || imported.length === 0) {
-          showToast('В файле не найдены корректные источники', 'warning');
-          return;
-        }
-        const valid = imported.filter(s => s && s.name && s.url).map(s => ({
-          id: s.id || ('src-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4)),
-          name: String(s.name).trim(),
-          type: s.type === 'rss' ? 'rss' : 'telegram',
-          url: String(s.url).trim(),
-          category: s.category || 'main',
-          enabled: s.enabled !== false,
-          custom: true
-        }));
-
-        state.newsSources = valid;
-        this.saveSources();
-        renderSourcesManager();
-        showToast(`Импортировано источников: ${valid.length}`, 'success');
-      } catch (err) {
-        showToast('Ошибка чтения JSON файла: ' + err.message, 'error');
-      }
-    };
-    reader.readAsText(file);
-  },
-
-  resetSources() {
-    state.newsSources = [...this.defaultSources];
-    this.saveSources();
-    renderSourcesManager();
-    showToast('Источники сброшены к стандартным', 'info');
   },
 
   loadLlmConfig() {
@@ -2093,8 +2148,18 @@ const newsManager = {
       console.info('Загрузка локального news_digest.json завершилась с фолбэком:', e.message);
     }
 
-    // Если кэша нет и fetch недоступен (например, открытие index.html локально по двойному клику без сервера),
-    // подставляем стартовый демонстрационный срез, чтобы лента сразу была интерактивной
+    // Ротация: фильтрация новостей старше 7 дней
+    const maxAgeMs = 7 * 24 * 60 * 60 * 1000;
+    const nowTime = Date.now();
+    if (Array.isArray(state.newsItems)) {
+      state.newsItems = state.newsItems.filter(it => {
+        if (!it.publishedAt) return true;
+        const pt = new Date(it.publishedAt).getTime();
+        return isNaN(pt) || (nowTime - pt) <= maxAgeMs;
+      });
+    }
+
+    // Если кэша нет и fetch недоступен, подставляем стартовый демонстрационный срез
     if (!state.newsItems || state.newsItems.length === 0) {
       state.newsItems = [
         {
@@ -2107,7 +2172,7 @@ const newsManager = {
             'Указ предусматривает арест счетов, запрет на любые коммерческие операции в стране и лишение лицензий на шельфовые проекты.'
           ],
           importance: 'high',
-          time: 'Свежее',
+          publishedAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
           sources: [
             { name: 'РБК', url: 'https://www.rbc.ru/rbcfreenews/6a9abdba5c85bd2adebcdc93', type: 'rss' },
             { name: 'Коммерсантъ', url: 'https://www.kommersant.ru/doc/6938210', type: 'rss' }
@@ -2123,7 +2188,7 @@ const newsManager = {
             'Бенчмарки демонстрируют паритет с коммерческими проприетарными сетями при существенном снижении затрат на обучение и инференс.'
           ],
           importance: 'high',
-          time: '1 час назад',
+          publishedAt: new Date(Date.now() - 65 * 60 * 1000).toISOString(),
           sources: [
             { name: 'Хабр', url: 'https://habr.com/ru/articles/869408/', type: 'rss' },
             { name: 'Telegram Info', url: 'https://t.me/tginfo/4112', type: 'telegram' }
@@ -2139,7 +2204,7 @@ const newsManager = {
             'Каналы получили расширенные инструменты аналитики аудитории и монетизации цифровых товаров за внутреннюю валюту Stars.'
           ],
           importance: 'medium',
-          time: '2 часа назад',
+          publishedAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
           sources: [
             { name: "Durov's Channel", url: 'https://t.me/durov/342', type: 'telegram' }
           ]
@@ -2163,6 +2228,15 @@ const newsManager = {
     if (!container) return;
 
     let items = state.newsItems || [];
+
+    // Ротация: не показывать новости старше 7 дней
+    const maxAgeMs = 7 * 24 * 60 * 60 * 1000;
+    const nowTime = Date.now();
+    items = items.filter(it => {
+      if (!it.publishedAt) return true;
+      const pt = new Date(it.publishedAt).getTime();
+      return isNaN(pt) || (nowTime - pt) <= maxAgeMs;
+    });
 
     // Фильтр по активным источникам пользователя (чекбоксы в модальном окне)
     const enabledSources = new Set(
@@ -2192,7 +2266,7 @@ const newsManager = {
     }
 
     const badge = document.getElementById('newsCountBadge');
-    if (badge) badge.textContent = state.newsItems.length || 0;
+    if (badge) badge.textContent = items.length || 0;
 
     if (items.length === 0) {
       container.innerHTML = '';
@@ -2201,6 +2275,20 @@ const newsManager = {
     }
 
     if (emptyState) emptyState.style.display = 'none';
+
+    // Группировка новостей по дням
+    const dayGroups = [];
+    const groupMap = new Map();
+
+    items.forEach(item => {
+      const dayInfo = getDayGroupInfo(item.publishedAt);
+      if (!groupMap.has(dayInfo.key)) {
+        const groupObj = { ...dayInfo, items: [] };
+        groupMap.set(dayInfo.key, groupObj);
+        dayGroups.push(groupObj);
+      }
+      groupMap.get(dayInfo.key).items.push(item);
+    });
 
     const tgIconSvg = `<svg class="tg-svg-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" style="vertical-align: -2px; margin-right: 3px; display: inline-block;"><circle cx="12" cy="12" r="12" fill="#24A1DE"/><path fill="#fff" d="M5.41 12.08L16.27 7.5c.5-.2.96.12.8.68l-1.85 8.72c-.14.63-.51.78-1.04.49l-2.82-2.08-1.36 1.31c-.15.15-.28.28-.57.28l.2-2.88 5.24-4.73c.23-.2-.05-.32-.36-.11l-6.48 4.08-2.8-.87c-.61-.19-.62-.61.13-.9z"/></svg>`;
 
@@ -2213,61 +2301,78 @@ const newsManager = {
       telegram: 'Telegram'
     };
 
-    container.innerHTML = items.map(item => {
-      const isTgCategory = item.category === 'telegram';
-      const catLabel = categoryNames[item.category] || item.categoryName || 'Новость';
-      const catBadgeHtml = isTgCategory
-        ? `<span class="news-cat-badge">${tgIconSvg}Telegram</span>`
-        : `<span class="news-cat-badge">${escapeHtml(catLabel)}</span>`;
-      const timeStr = item.time || 'Свежее';
-      const tldrHtml = Array.isArray(item.tldr)
-        ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
-        : `<li>${escapeHtml(item.text || '')}</li>`;
-
-      const sourcesHtml = Array.isArray(item.sources)
-        ? item.sources.map(src => {
-            const isTg = src.type === 'telegram';
-            const iconHtml = isTg ? tgIconSvg : '📰 ';
-            let targetUrl = src.url || '#';
-            if (isTg && !targetUrl.startsWith('http')) {
-              targetUrl = `https://t.me/${targetUrl.replace('@', '')}`;
-            }
-            const postMatch = targetUrl.match(/t\.me\/[^/]+\/(\d+)/);
-            const postLabel = postMatch ? ` #${postMatch[1]}` : '';
-            const tooltipTitle = postMatch
-              ? `Открыть пост #${postMatch[1]} в Telegram-канале ${escapeHtml(src.name)}`
-              : `Открыть первоисточник: ${escapeHtml(src.name)}`;
-
-            return `<a href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener noreferrer" class="news-source-chip" title="${tooltipTitle}">
-              <span>${iconHtml}${escapeHtml(src.name)}${postLabel ? `<span class="source-post-num">${postLabel}</span>` : ''}</span>
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-            </a>`;
-          }).join('')
-        : '';
-
-      return `
-        <article class="news-card" data-news-id="${escapeHtml(item.id)}">
-          <div class="news-card-header">
-            ${catBadgeHtml}
-            <span class="news-time">${escapeHtml(timeStr)}</span>
+    container.innerHTML = dayGroups.map(group => {
+      const countLabel = `${group.items.length} ${ruPlural(group.items.length, 'новость', 'новости', 'новостей')}`;
+      const dividerHtml = `
+        <div class="news-day-divider">
+          <div class="news-day-title-wrap">
+            <span class="news-day-title">${escapeHtml(group.title)}</span>
+            <span class="news-day-count">${countLabel}</span>
           </div>
-          <h3 class="news-title">${escapeHtml(item.title)}</h3>
-          <ul class="news-tldr-list">
-            ${tldrHtml}
-          </ul>
-          <div class="news-card-footer">
-            <div class="news-sources-group">
-              ${sourcesHtml}
-            </div>
-            <div class="news-card-actions">
-              <button type="button" class="btn-save-to-brain" onclick="newsManager.saveToBrain('${escapeHtml(item.id)}')" title="Сохранить эту выжимку в личную базу знаний">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                <span>В базу знаний</span>
-              </button>
-            </div>
-          </div>
-        </article>
+          <div class="news-day-line"></div>
+        </div>
       `;
+
+      const cardsHtml = group.items.map(item => {
+        const isTgCategory = item.category === 'telegram';
+        const catLabel = categoryNames[item.category] || item.categoryName || 'Новость';
+        const catBadgeHtml = isTgCategory
+          ? `<span class="news-cat-badge">${tgIconSvg}Telegram</span>`
+          : `<span class="news-cat-badge">${escapeHtml(catLabel)}</span>`;
+        const timeStr = formatRelativeNewsTime(item.publishedAt, item.time || 'Свежее');
+        const tldrHtml = Array.isArray(item.tldr)
+          ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
+          : `<li>${escapeHtml(item.text || '')}</li>`;
+
+        const sourcesHtml = Array.isArray(item.sources)
+          ? item.sources.map(src => {
+              const isTg = src.type === 'telegram';
+              const iconHtml = isTg ? tgIconSvg : '📰 ';
+              let targetUrl = src.url || '#';
+              if (isTg && !targetUrl.startsWith('http')) {
+                targetUrl = `https://t.me/${targetUrl.replace('@', '')}`;
+              }
+              const postMatch = targetUrl.match(/t\.me\/[^/]+\/(\d+)/);
+              const postLabel = postMatch ? ` #${postMatch[1]}` : '';
+              const tooltipTitle = postMatch
+                ? `Открыть пост #${postMatch[1]} в Telegram-канале ${escapeHtml(src.name)}`
+                : `Открыть первоисточник: ${escapeHtml(src.name)}`;
+
+              return `<a href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener noreferrer" class="news-source-chip" title="${tooltipTitle}">
+                <span>${iconHtml}${escapeHtml(src.name)}${postLabel ? `<span class="source-post-num">${postLabel}</span>` : ''}</span>
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+              </a>`;
+            }).join('')
+          : '';
+
+        const exactTimeFormatted = item.publishedAt ? new Date(item.publishedAt).toLocaleString('ru-RU') : '';
+
+        return `
+          <article class="news-card" data-news-id="${escapeHtml(item.id)}">
+            <div class="news-card-header">
+              ${catBadgeHtml}
+              <span class="news-time" title="${escapeHtml(exactTimeFormatted)}">${escapeHtml(timeStr)}</span>
+            </div>
+            <h3 class="news-title">${escapeHtml(item.title)}</h3>
+            <ul class="news-tldr-list">
+              ${tldrHtml}
+            </ul>
+            <div class="news-card-footer">
+              <div class="news-sources-group">
+                ${sourcesHtml}
+              </div>
+              <div class="news-card-actions">
+                <button type="button" class="btn-save-to-brain" onclick="newsManager.saveToBrain('${escapeHtml(item.id)}')" title="Сохранить эту выжимку в личную базу знаний">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <span>В базу знаний</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      return dividerHtml + cardsHtml;
     }).join('');
   },
 
@@ -2303,7 +2408,7 @@ const newsManager = {
 
   async init() {
     window.newsManager = this;
-    this.loadSources();
+    await this.loadSources();
     this.loadLlmConfig();
     await this.loadDigest();
   }
@@ -2375,32 +2480,6 @@ function setupNewsEvents() {
     });
   }
 
-  // Кнопки панели управления источниками (экспорт, импорт, сброс)
-  const exportBtn = document.getElementById('exportSourcesBtn');
-  if (exportBtn) {
-    exportBtn.addEventListener('click', () => newsManager.exportSources());
-  }
-
-  const importInput = document.getElementById('importSourcesFileInput');
-  if (importInput) {
-    importInput.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (file) {
-        newsManager.importSources(file);
-        importInput.value = '';
-      }
-    });
-  }
-
-  const resetBtn = document.getElementById('resetSourcesBtn');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      if (confirm('Восстановить базовый список источников? Добавленные вручную каналы будут сброшены.')) {
-        newsManager.resetSources();
-      }
-    });
-  }
-
   // Быстрое включение/отключение всех источников
   const selectAllBtn = document.getElementById('selectAllSourcesBtn');
   if (selectAllBtn) {
@@ -2423,53 +2502,6 @@ function setupNewsEvents() {
       showToast('Все источники отключены', 'info');
     });
   }
-
-  // Добавление нового источника
-  const addSourceBtn = document.getElementById('addSourceSubmitBtn');
-  if (addSourceBtn) {
-    addSourceBtn.addEventListener('click', () => {
-      const nameIn = document.getElementById('newSourceNameInput');
-      const typeIn = document.getElementById('newSourceTypeSelect');
-      const urlIn = document.getElementById('newSourceUrlInput');
-      const catIn = document.getElementById('newSourceCategorySelect');
-
-      const name = nameIn ? nameIn.value.trim() : '';
-      const type = typeIn ? typeIn.value : 'telegram';
-      let url = urlIn ? urlIn.value.trim() : '';
-      const category = catIn ? catIn.value : 'main';
-
-      if (!name || !url) {
-        showToast('Укажите название и адрес источника', 'warning');
-        return;
-      }
-
-      if (type === 'telegram') {
-        url = url.replace(/^https?:\/\/(www\.)?t\.me\/(s\/)?/, '').replace(/^@/, '').replace(/\/.*$/, '').trim();
-      } else if (type === 'rss') {
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          url = 'https://' + url;
-        }
-      }
-
-      const newSrc = {
-        id: 'src-' + Date.now(),
-        name: name,
-        type: type,
-        url: url,
-        category: category,
-        enabled: true,
-        custom: true
-      };
-
-      state.newsSources.push(newSrc);
-      newsManager.saveSources();
-      renderSourcesManager();
-      newsManager.renderNewsApp();
-      if (nameIn) nameIn.value = '';
-      if (urlIn) urlIn.value = '';
-      showToast(`Источник "${name}" добавлен в систему!`, 'success');
-    });
-  }
 }
 
 function renderSourcesManager() {
@@ -2482,24 +2514,15 @@ function renderSourcesManager() {
   if (countBadge) countBadge.textContent = `${activeCount} активных из ${sources.length}`;
 
   if (sources.length === 0) {
-    container.innerHTML = '<div style="padding: 12px; color: var(--text-muted); font-size: 0.85rem; text-align: center;">Источников пока нет. Добавьте первый ниже!</div>';
+    container.innerHTML = '<div style="padding: 12px; color: var(--text-muted); font-size: 0.85rem; text-align: center;">Источников пока нет.</div>';
     return;
   }
 
-  const defaultIds = new Set((newsManager.defaultSources || []).map(ds => ds.id));
-
   container.innerHTML = sources.map((s) => {
-    const isCustom = s.custom || !defaultIds.has(s.id);
     const icon = s.type === 'telegram'
       ? `<svg class="tg-svg-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" style="vertical-align: -3px;"><circle cx="12" cy="12" r="12" fill="#24A1DE"/><path fill="#fff" d="M5.41 12.08L16.27 7.5c.5-.2.96.12.8.68l-1.85 8.72c-.14.63-.51.78-1.04.49l-2.82-2.08-1.36 1.31c-.15.15-.28.28-.57.28l.2-2.88 5.24-4.73c.23-.2-.05-.32-.36-.11l-6.48 4.08-2.8-.87c-.61-.19-.62-.61.13-.9z"/></svg>`
       : '📰';
     const isChecked = s.enabled ? 'checked' : '';
-    const customBadgeHtml = isCustom ? '<span class="source-item-custom-badge">Пользовательский</span>' : '';
-    const deleteBtnHtml = isCustom
-      ? `<button type="button" class="btn-remove-source" onclick="deleteSource('${escapeHtml(s.id)}')" title="Удалить добавленный источник">
-           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-         </button>`
-      : '';
 
     return `
       <div class="source-item-row" data-source-id="${escapeHtml(s.id)}">
@@ -2507,14 +2530,12 @@ function renderSourcesManager() {
           <span class="source-item-icon">${icon}</span>
           <span class="source-item-name" title="${escapeHtml(s.url)}">${escapeHtml(s.name)}</span>
           <span class="source-item-tag">${escapeHtml(s.category)}</span>
-          ${customBadgeHtml}
         </div>
         <div class="source-item-actions">
           <label style="margin: 0; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.78rem; color: var(--text-muted);">
             <input type="checkbox" ${isChecked} onchange="toggleSourceEnabled('${escapeHtml(s.id)}', this.checked)">
             <span>Вкл</span>
           </label>
-          ${deleteBtnHtml}
         </div>
       </div>
     `;
@@ -2531,15 +2552,6 @@ function toggleSourceEnabled(sourceId, enabled) {
   }
 }
 window.toggleSourceEnabled = toggleSourceEnabled;
-
-function deleteSource(sourceId) {
-  state.newsSources = (state.newsSources || []).filter(src => src.id !== sourceId);
-  newsManager.saveSources();
-  renderSourcesManager();
-  newsManager.renderNewsApp();
-  showToast('Источник удален');
-}
-window.deleteSource = deleteSource;
 
 // ==========================================================================
 // Настройка обработчиков событий

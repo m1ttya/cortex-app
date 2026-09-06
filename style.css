@@ -4491,133 +4491,72 @@ select.form-input:hover {
   background: var(--accent-warm-soft);
 }
 
-.author-sources-details {
-  margin-top: 14px;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 12px;
-}
-
-.author-sources-summary {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
+.sources-md-note {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  user-select: none;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 10px 14px;
   background: var(--bg-surface);
-  border: 1px dashed var(--border-subtle);
-  transition: var(--transition);
-}
-
-.author-sources-summary:hover {
-  color: var(--accent-warm);
-  border-color: var(--border-accent);
-}
-
-.author-summary-hint {
-  font-size: 0.72rem;
-  font-weight: 400;
-  opacity: 0.75;
-}
-
-.author-sources-body {
-  padding-top: 12px;
-}
-
-.sources-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.btn-sources-tool {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 5px 11px;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn-sources-tool:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
-  background: var(--bg-hover);
-}
-
-.btn-sources-reset {
-  margin-left: auto;
+  border-radius: var(--radius-md);
+  font-size: 0.81rem;
+  line-height: 1.5;
   color: var(--text-muted);
 }
 
-.btn-sources-reset:hover {
+.sources-md-note code {
+  font-family: monospace;
+  font-size: 0.86em;
+  background: var(--bg-card);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
   color: var(--accent-warm);
 }
 
-
-.add-source-box {
-  background: var(--bg-card);
-  border: 1px dashed var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-top: 14px;
+/* Разделители по дням в ленте новостей */
+.news-day-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+  margin-bottom: 2px;
 }
 
-.add-source-title {
-  font-size: 0.84rem;
+.news-day-divider:first-child {
+  margin-top: 0;
+}
+
+.news-day-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.news-day-title {
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 12px;
+  letter-spacing: -0.01em;
 }
 
-.add-source-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 10px;
-  align-items: center;
-}
-
-.add-source-grid .form-input {
-  height: 44px;
-  font-size: 0.88rem;
-  width: 100%;
-}
-
-.add-source-grid .span-2 {
-  grid-column: span 2;
-}
-
-.add-source-grid button#addSourceSubmitBtn {
-  grid-column: span 2;
-  height: 42px;
+.news-day-count {
+  font-size: 0.72rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  background: var(--accent-warm-soft);
-  color: var(--accent-warm);
-  border: 1px solid var(--accent-warm);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: var(--transition);
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 2px 9px;
 }
 
-.add-source-grid button#addSourceSubmitBtn:hover {
-  background: var(--accent-warm);
-  color: #fff;
+.news-day-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-subtle) 0%, transparent 100%);
 }
 
 .btn-text-mobile {
@@ -4711,14 +4650,18 @@ select.form-input:hover {
     padding: 12px 12px;
   }
 
-  .add-source-grid {
-    grid-template-columns: 1fr;
+  .news-day-divider {
     gap: 10px;
+    margin-top: 14px;
   }
 
-  .add-source-grid .span-2,
-  .add-source-grid button#addSourceSubmitBtn {
-    grid-column: span 1;
+  .news-day-title {
+    font-size: 0.88rem;
+  }
+
+  .news-day-count {
+    font-size: 0.68rem;
+    padding: 2px 7px;
   }
 }
 

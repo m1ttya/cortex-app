@@ -892,55 +892,11 @@
             <!-- Рендерится через JS -->
           </div>
 
-          <!-- Скрытый блок для автора (добавление новых каналов в систему) -->
-          <details class="author-sources-details" id="authorSourcesDetails">
-            <summary class="author-sources-summary">
-              <span>⚙️ Управление источниками (для автора)</span>
-              <span class="author-summary-hint">добавить канал, экспорт JSON</span>
-            </summary>
-            <div class="author-sources-body">
-              <!-- Панель управления: экспорт, импорт, сброс -->
-              <div class="sources-toolbar">
-                <button type="button" class="btn-sources-tool" id="exportSourcesBtn" title="Скачать список источников в файл news_sources.json для парсера">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  <span>Экспорт JSON</span>
-                </button>
-                <label class="btn-sources-tool" title="Загрузить источники из файла JSON">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                  <span>Импорт</span>
-                  <input type="file" id="importSourcesFileInput" accept=".json" style="display: none;">
-                </label>
-                <button type="button" class="btn-sources-tool btn-sources-reset" id="resetSourcesBtn" title="Восстановить исходные источники по умолчанию">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
-                  <span>Сброс</span>
-                </button>
-              </div>
-
-              <!-- Форма добавления нового источника -->
-              <div class="add-source-box">
-                <div class="add-source-title">Добавить Telegram-канал или RSS-ленту:</div>
-                <div class="add-source-grid">
-                  <input type="text" id="newSourceNameInput" class="form-input" placeholder="Название (напр. Мой канал)">
-                  <select id="newSourceTypeSelect" class="form-input">
-                    <option value="telegram">Telegram (@канал)</option>
-                    <option value="rss">RSS лента</option>
-                  </select>
-                  <input type="text" id="newSourceUrlInput" class="form-input span-2" placeholder="@channel, t.me/channel или https://.../rss">
-                  <select id="newSourceCategorySelect" class="form-input">
-                    <option value="main">Главное</option>
-                    <option value="russia">Россия</option>
-                    <option value="city">Город</option>
-                    <option value="world">Мир</option>
-                    <option value="tech">Технологии</option>
-                    <option value="telegram">Telegram</option>
-                  </select>
-                  <button type="button" class="btn btn-secondary btn-sm" id="addSourceSubmitBtn" style="justify-content: center;">
-                    <span>+ Добавить в систему</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </details>
+          <!-- Информационная сноска о news_sources.md -->
+          <div class="sources-md-note">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 1px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Каталог источников курируется автором в файле <code>news_sources.md</code>. Отметьте каналы галочками, чтобы настроить ленту под себя.</span>
+          </div>
         </div>
       </div>
       <div class="modal-footer news-modal-footer">

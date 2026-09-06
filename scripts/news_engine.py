@@ -11,14 +11,56 @@ import re
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
+MD_SOURCES_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_sources.md')
 SOURCES_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_sources.json')
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_digest.json')
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 }
+
+def parse_sources_from_markdown(filepath):
+    """Парсинг таблицы источников из news_sources.md"""
+    if not os.path.exists(filepath):
+        return []
+    sources = []
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        in_table = False
+        for line in lines:
+            stripped = line.strip()
+            if not stripped.startswith('|'):
+                continue
+            cols = [c.strip().strip('`') for c in stripped.split('|')[1:-1]]
+            if len(cols) < 5:
+                continue
+            # Пропускаем строку заголовка и разделитель :---
+            if cols[0].lower() in ('id', ':---', '---') or '---' in cols[0] or '---' in cols[1]:
+                continue
+            
+            src_id = cols[0]
+            name = cols[1]
+            stype = cols[2].lower()
+            url = cols[3]
+            cat = cols[4].lower()
+            
+            if src_id and name and url:
+                sources.append({
+                    'id': src_id,
+                    'name': name,
+                    'type': stype,
+                    'url': url,
+                    'category': cat,
+                    'enabled': True
+                })
+        print(f"[Источники] Загружено {len(sources)} источников из {os.path.basename(filepath)}")
+    except Exception as e:
+        print(f"[Warning] Ошибка парсинга {filepath}: {e}")
+    return sources
 
 def clean_html(raw_html):
     """Удаляет HTML теги и спецсимволы"""
@@ -192,6 +234,7 @@ def mock_llm_summarize(raw_items):
             'fullText': raw_text,
             'importance': 'high' if idx < 3 else 'normal',
             'time': 'Свежее',
+            'publishedAt': datetime.now(timezone.utc).isoformat(),
             'sources': [{
                 'name': item.get('source'),
                 'url': item.get('url'),
@@ -204,16 +247,32 @@ def mock_llm_summarize(raw_items):
 def main():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Запуск сбора новостей CORTEX...")
     
+    # 1. Приоритетно загружаем источники из news_sources.md
     sources = []
-    if os.path.exists(SOURCES_FILE):
+    if os.path.exists(MD_SOURCES_FILE):
+        sources = parse_sources_from_markdown(MD_SOURCES_FILE)
+        if sources:
+            try:
+                with open(SOURCES_FILE, 'w', encoding='utf-8') as sf:
+                    json.dump({
+                        "version": "1.0",
+                        "updatedAt": datetime.now(timezone.utc).isoformat(),
+                        "sources": sources
+                    }, sf, ensure_ascii=False, indent=2)
+                print(f"[Источники] Синхронизирован {SOURCES_FILE}")
+            except Exception as e:
+                print(f"[Warning] Ошибка сохранения {SOURCES_FILE}: {e}")
+                
+    if not sources and os.path.exists(SOURCES_FILE):
         try:
             with open(SOURCES_FILE, 'r', encoding='utf-8') as f:
                 sources_cfg = json.load(f)
                 sources.extend(sources_cfg.get('sources', []))
         except Exception as e:
             print(f"[Warning] Ошибка чтения {SOURCES_FILE}: {e}")
-    else:
-        print(f"Файл источников не найден: {SOURCES_FILE}")
+            
+    if not sources:
+        print(f"[Warning] Источники не найдены ни в {MD_SOURCES_FILE}, ни в {SOURCES_FILE}")
 
     # Также подтягиваем пользовательские источники из cortex_db.json, если они там сохранены
     db_file = os.path.join(os.path.dirname(__file__), '..', 'cortex_db.json')
@@ -262,6 +321,7 @@ def main():
 4. Определи категорию: "main" (Главное), "russia" (Россия), "city" (Город), "world" (Мир), "tech" (Технологии), "telegram" (Telegram).
 5. Собери массив уникальных источников ("sources") с оригинальными URL.
 6. Выставь важность ("importance"): "high", "medium" или "normal".
+7. Добавь машинную дату публикации "publishedAt" в формате ISO 8601 (например: "{datetime.now(timezone.utc).isoformat()}").
 
 Верни строго JSON-массив объектов:
 [
@@ -273,6 +333,7 @@ def main():
     "tldr": ["Тезис 1", "Тезис 2"],
     "importance": "high|medium|normal",
     "time": "Время или дата",
+    "publishedAt": "ISO-8601 дата",
     "sources": [{{"name": "...", "url": "...", "type": "rss|telegram"}}]
   }}
 ]
@@ -328,22 +389,72 @@ def main():
     if not processed_items:
         processed_items = mock_llm_summarize(raw_news)
 
-    # Гарантируем компактный размер базы дайджеста (не более 35 самых важных сюжетов)
-    if processed_items and len(processed_items) > 35:
-        processed_items = processed_items[:35]
+    # 7-дневная ротация: объединяем со старым дайджестом и удаляем новости старше 7 дней
+    cutoff = datetime.now(timezone.utc) - timedelta(days=7)
+    existing_items = []
+    if os.path.exists(OUTPUT_FILE):
+        try:
+            with open(OUTPUT_FILE, 'r', encoding='utf-8') as f:
+                old_digest = json.load(f)
+                existing_items = old_digest.get('items', [])
+        except Exception as e:
+            print(f"[Notice] Чтение предыдущего {OUTPUT_FILE}: {e}")
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    for it in processed_items:
+        if 'publishedAt' not in it or not it['publishedAt']:
+            it['publishedAt'] = now_iso
+
+    # Дедупликация по заголовку
+    merged_map = {}
+    for it in processed_items:
+        key = it.get('title', '').strip().lower()
+        if key:
+            merged_map[key] = it
+
+    for it in existing_items:
+        key = it.get('title', '').strip().lower()
+        if not key or key in merged_map:
+            continue
+        # Проверяем срок давности 7 дней
+        pub_str = it.get('publishedAt')
+        if pub_str:
+            try:
+                pub_dt = datetime.fromisoformat(pub_str.replace('Z', '+00:00'))
+                if pub_dt < cutoff:
+                    continue  # Старше 7 дней - ротируем/удаляем
+            except Exception:
+                pass
+        merged_map[key] = it
+
+    final_items = list(merged_map.values())
+
+    # Сортируем по дате публикации (свежие сверху)
+    def get_item_timestamp(item):
+        pub = item.get('publishedAt', '')
+        try:
+            return datetime.fromisoformat(pub.replace('Z', '+00:00')).timestamp()
+        except Exception:
+            return 0
+
+    final_items.sort(key=get_item_timestamp, reverse=True)
+    if len(final_items) > 50:
+        final_items = final_items[:50]
 
     output_data = {
-        "version": "1.0",
+        "version": "2.2",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "provider": provider_name,
-        "itemsCount": len(processed_items),
-        "items": processed_items
+        "itemsCount": len(final_items),
+        "retentionDays": 7,
+        "items": final_items
     }
     
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(output_data, f, ensure_ascii=False, indent=2)
         
-    print(f"Сводка успешно сохранена в {OUTPUT_FILE}! ({len(processed_items)} сюжетов)")
+    print(f"Сводка успешно сохранена в {OUTPUT_FILE}! ({len(final_items)} сюжетов, хранение 7 дней)")
 
 if __name__ == '__main__':
     main()
+
