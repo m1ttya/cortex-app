@@ -2304,7 +2304,7 @@ const newsManager = {
           publishedAt: new Date(Date.now() - 65 * 60 * 1000).toISOString(),
           sources: [
             { name: 'Хабр', url: 'https://habr.com/ru/articles/869408/', type: 'rss' },
-            { name: 'Telegram Info', url: 'https://t.me/tginfo/4112', type: 'telegram' }
+            { name: 'GitHub', url: 'https://github.com/deepseek-ai/DeepSeek-V3', type: 'web' }
           ]
         },
         {

@@ -512,9 +512,9 @@
           "type": "rss"
         },
         {
-          "name": "Telegram Info",
-          "url": "https://t.me/tginfo/4112",
-          "type": "telegram"
+          "name": "GitHub",
+          "url": "https://github.com/deepseek-ai/DeepSeek-V3",
+          "type": "web"
         }
       ]
     },
