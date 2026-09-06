@@ -4616,6 +4616,13 @@ select.form-input:hover {
   line-height: 1.45;
   margin: 0 0 12px 0;
   letter-spacing: -0.01em;
+  text-align: justify;
+  text-justify: inter-word;
+  text-align-last: left;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .news-tldr-list {
@@ -4627,6 +4634,7 @@ select.form-input:hover {
   flex: 1;
   text-align: justify;
   text-justify: inter-word;
+  text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -4637,6 +4645,7 @@ select.form-input:hover {
   margin-bottom: 8px;
   text-align: justify;
   text-justify: inter-word;
+  text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -5105,7 +5114,13 @@ select.form-input:hover {
   .news-title {
     font-size: 1rem !important;
     line-height: 1.4 !important;
-    word-break: break-word !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    text-align-last: left !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -ms-hyphens: auto !important;
+    word-break: normal !important;
     overflow-wrap: break-word !important;
   }
 
@@ -5115,6 +5130,7 @@ select.form-input:hover {
     padding-left: 16px !important;
     text-align: justify !important;
     text-justify: inter-word !important;
+    text-align-last: left !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
     -ms-hyphens: auto !important;
@@ -5123,6 +5139,7 @@ select.form-input:hover {
   .news-tldr-list li {
     text-align: justify !important;
     text-justify: inter-word !important;
+    text-align-last: left !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
     -ms-hyphens: auto !important;

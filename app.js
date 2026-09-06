@@ -2456,8 +2456,8 @@ const newsManager = {
           : `<span class="news-cat-badge">${escapeHtml(catLabel)}</span>`;
         const timeStr = formatNewsPublishTime(item.publishedAt, item.time || '');
         const tldrHtml = Array.isArray(item.tldr)
-          ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
-          : `<li>${escapeHtml(item.text || '')}</li>`;
+          ? item.tldr.map(bullet => `<li>${addRussianHyphens(escapeHtml(bullet))}</li>`).join('')
+          : `<li>${addRussianHyphens(escapeHtml(item.text || ''))}</li>`;
 
         const sourcesHtml = Array.isArray(item.sources)
           ? item.sources.map(src => {
@@ -2490,7 +2490,7 @@ const newsManager = {
               ${catBadgeHtml}
               <span class="news-time" title="${escapeHtml(exactTimeFormatted)}">${escapeHtml(timeStr)}</span>
             </div>
-            <h3 class="news-title">${escapeHtml(item.title)}</h3>
+            <h3 class="news-title">${addRussianHyphens(escapeHtml(item.title))}</h3>
             <ul class="news-tldr-list">
               ${tldrHtml}
             </ul>
@@ -4859,6 +4859,74 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+/**
+ * Вставляет мягкие переносы (\u00AD) в русские слова для безупречного выравнивания по ширине (justify)
+ * без неестественных широких пробелов («дыр») между словами на мобильных устройствах.
+ */
+function addRussianHyphens(text) {
+  if (!text || typeof text !== 'string') return '';
+
+  const VOWELS = 'аеёиоуыэюяАЕЁИОУЫЭЮЯ';
+  const VOWEL_SET = new Set(VOWELS);
+  const SPECIAL_SET = new Set('ьъйЬЪЙ');
+  const CONSONANTS_SET = new Set('бвгджзклмнпрстфхцчшщБВГДЖЗКЛМНПРСТФХЦЧШЩ');
+
+  return text.replace(/[а-яёА-ЯЁ]{5,}/g, (word) => {
+    const chars = Array.from(word);
+    const n = chars.length;
+    const breaks = [];
+
+    for (let i = 1; i < n - 2; i++) {
+      const c1 = chars[i];
+      const c2 = chars[i + 1];
+
+      if (SPECIAL_SET.has(c2)) continue;
+
+      let hasVowelBefore = false;
+      for (let j = 0; j <= i; j++) {
+        if (VOWEL_SET.has(chars[j])) { hasVowelBefore = true; break; }
+      }
+      if (!hasVowelBefore) continue;
+
+      let hasVowelAfter = false;
+      for (let j = i + 1; j < n; j++) {
+        if (VOWEL_SET.has(chars[j])) { hasVowelAfter = true; break; }
+      }
+      if (!hasVowelAfter) continue;
+
+      if (SPECIAL_SET.has(c1)) {
+        breaks.push(i + 1);
+      } else if (VOWEL_SET.has(c1) && CONSONANTS_SET.has(c2) && i + 2 < n && VOWEL_SET.has(chars[i + 2])) {
+        breaks.push(i + 1);
+      } else if (CONSONANTS_SET.has(c1) && CONSONANTS_SET.has(c2)) {
+        breaks.push(i + 1);
+      } else if (VOWEL_SET.has(c1) && VOWEL_SET.has(c2) && c1.toLowerCase() !== c2.toLowerCase()) {
+        breaks.push(i + 1);
+      }
+    }
+
+    const validBreaks = [];
+    let lastPos = 0;
+    for (const b of breaks) {
+      if (b - lastPos >= 2 && (n - b) >= 2) {
+        validBreaks.push(b);
+        lastPos = b;
+      }
+    }
+
+    if (validBreaks.length === 0) return word;
+
+    let result = '';
+    let prev = 0;
+    for (const b of validBreaks) {
+      result += word.slice(prev, b) + '\u00AD';
+      prev = b;
+    }
+    result += word.slice(prev);
+    return result;
+  });
 }
 
 // Регистрация Service Worker для PWA и оффлайн-доступа
