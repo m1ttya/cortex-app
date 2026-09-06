@@ -11,6 +11,7 @@ import re
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
+import email.utils
 from datetime import datetime, timezone, timedelta
 
 MD_SOURCES_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_sources.md')
@@ -93,6 +94,13 @@ def fetch_rss_items(source, max_items=5):
                 link = it.findtext('link', '').strip()
                 desc = clean_html(it.findtext('description', ''))
                 pub_date = it.findtext('pubDate', '').strip()
+                pub_iso = None
+                if pub_date:
+                    try:
+                        dt = email.utils.parsedate_to_datetime(pub_date)
+                        pub_iso = dt.astimezone(timezone.utc).isoformat()
+                    except Exception:
+                        pass
                 
                 if title:
                     items.append({
@@ -102,7 +110,7 @@ def fetch_rss_items(source, max_items=5):
                         'url': link,
                         'title': title,
                         'text': desc.strip(),
-                        'date': pub_date
+                        'date': pub_iso or pub_date or datetime.now(timezone.utc).isoformat()
                     })
     except Exception as e:
         print(f"[RSS Error] {name} ({url}): {e}")
@@ -234,7 +242,7 @@ def mock_llm_summarize(raw_items):
             'fullText': raw_text,
             'importance': 'high' if idx < 3 else 'normal',
             'time': 'Свежее',
-            'publishedAt': datetime.now(timezone.utc).isoformat(),
+            'publishedAt': item.get('date') or datetime.now(timezone.utc).isoformat(),
             'sources': [{
                 'name': item.get('source'),
                 'url': item.get('url'),

@@ -202,6 +202,7 @@ const state = {
   newsSources: [],
   activeNewsCategory: 'all',
   newsSearchQuery: '',
+  newsGeneratedAt: null,
   llmConfig: {
     provider: 'gemini',
     apiKey: '',
@@ -1990,6 +1991,68 @@ function formatRelativeNewsTime(publishedAt, fallbackStr = 'Свежее') {
   return `${pubDate.getDate()} ${monthsShort[pubDate.getMonth()]}, ${hh}:${mm}`;
 }
 
+/**
+ * Форматирует точное время публикации статьи/поста (14:35, Вчера 18:20, 4 сен, 16:40)
+ */
+function formatNewsPublishTime(publishedAt, fallbackStr = '') {
+  if (!publishedAt) return fallbackStr || 'Сегодня';
+  const pubDate = new Date(publishedAt);
+  if (isNaN(pubDate.getTime())) return fallbackStr || 'Сегодня';
+
+  const now = new Date();
+  const isToday = now.getDate() === pubDate.getDate() &&
+                  now.getMonth() === pubDate.getMonth() &&
+                  now.getFullYear() === pubDate.getFullYear();
+
+  const hh = String(pubDate.getHours()).padStart(2, '0');
+  const mm = String(pubDate.getMinutes()).padStart(2, '0');
+  const timeStr = `${hh}:${mm}`;
+
+  if (isToday) {
+    return timeStr;
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = yesterday.getDate() === pubDate.getDate() &&
+                      yesterday.getMonth() === pubDate.getMonth() &&
+                      yesterday.getFullYear() === pubDate.getFullYear();
+
+  if (isYesterday) {
+    return `Вчера, ${timeStr}`;
+  }
+
+  const monthsShort = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  return `${pubDate.getDate()} ${monthsShort[pubDate.getMonth()]}, ${timeStr}`;
+}
+
+/**
+ * Форматирует относительное время последнего сбора сводки системой CORTEX
+ */
+function formatRelativeSyncTime(isoString) {
+  if (!isoString) return 'Обновлено недавно';
+  const syncDate = new Date(isoString);
+  if (isNaN(syncDate.getTime())) return 'Обновлено недавно';
+
+  const now = new Date();
+  const diffMs = Math.max(0, now.getTime() - syncDate.getTime());
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+
+  if (diffMin < 1) {
+    return 'Обновлено только что';
+  }
+  if (diffMin < 60) {
+    return `Обновлено ${diffMin} ${ruPlural(diffMin, 'минуту', 'минуты', 'минут')} назад`;
+  }
+  if (diffHour < 24) {
+    return `Обновлено ${diffHour} ${ruPlural(diffHour, 'час', 'часа', 'часов')} назад`;
+  }
+  const diffDays = Math.floor(diffHour / 24);
+  return `Обновлено ${diffDays} ${ruPlural(diffDays, 'день', 'дня', 'дней')} назад`;
+}
+
 function getDayGroupInfo(publishedAt) {
   if (!publishedAt) {
     return { key: 'today', title: '🌟 Сегодня' };
@@ -2216,9 +2279,31 @@ const newsManager = {
   },
 
   updateDigestMeta(data) {
+    if (data && data.generatedAt) {
+      state.newsGeneratedAt = data.generatedAt;
+    }
     const badge = document.getElementById('newsCountBadge');
     if (badge) {
       badge.textContent = state.newsItems.length || 0;
+    }
+    this.renderSyncStatus();
+  },
+
+  renderSyncStatus() {
+    const syncText = document.getElementById('newsSyncTimeText');
+    const syncStatus = document.getElementById('newsSyncStatus');
+    if (!syncText) return;
+
+    if (!state.newsGeneratedAt) {
+      syncText.textContent = 'Обновлено недавно';
+      return;
+    }
+
+    syncText.textContent = formatRelativeSyncTime(state.newsGeneratedAt);
+
+    const genDate = new Date(state.newsGeneratedAt);
+    if (!isNaN(genDate.getTime()) && syncStatus) {
+      syncStatus.title = `Время последнего обновления данных: ${genDate.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`;
     }
   },
 
@@ -2319,7 +2404,7 @@ const newsManager = {
         const catBadgeHtml = isTgCategory
           ? `<span class="news-cat-badge">${tgIconSvg}Telegram</span>`
           : `<span class="news-cat-badge">${escapeHtml(catLabel)}</span>`;
-        const timeStr = formatRelativeNewsTime(item.publishedAt, item.time || 'Свежее');
+        const timeStr = formatNewsPublishTime(item.publishedAt, item.time || '');
         const tldrHtml = Array.isArray(item.tldr)
           ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
           : `<li>${escapeHtml(item.text || '')}</li>`;
@@ -2345,7 +2430,9 @@ const newsManager = {
             }).join('')
           : '';
 
-        const exactTimeFormatted = item.publishedAt ? new Date(item.publishedAt).toLocaleString('ru-RU') : '';
+        const exactTimeFormatted = item.publishedAt
+          ? `Опубликовано: ${new Date(item.publishedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`
+          : 'Время публикации';
 
         return `
           <article class="news-card" data-news-id="${escapeHtml(item.id)}">
@@ -2374,6 +2461,11 @@ const newsManager = {
 
       return dividerHtml + cardsHtml;
     }).join('');
+
+    // Подключаем плавную горизонтальную прокрутку колесиком и свайп для чипов источников
+    container.querySelectorAll('.news-sources-group').forEach(group => {
+      enableSmoothHorizontalScroll(group);
+    });
   },
 
   async saveToBrain(newsId) {
@@ -2502,6 +2594,13 @@ function setupNewsEvents() {
       showToast('Все источники отключены', 'info');
     });
   }
+
+  // Периодическое обновление относительного времени генерации дайджеста каждые 30 секунд
+  setInterval(() => {
+    if (window.newsManager && typeof window.newsManager.renderSyncStatus === 'function') {
+      window.newsManager.renderSyncStatus();
+    }
+  }, 30000);
 }
 
 function renderSourcesManager() {
@@ -2817,11 +2916,15 @@ function setupEventListeners() {
 function enableSmoothHorizontalScroll(el) {
   if (!el) return;
 
-  // 1. Прокрутка колесиком мыши (конвертация вертикального движения в горизонтальное)
+  // 1. Прокрутка колесиком мыши (конвертация вертикального движения в горизонтальное при наличии переполнения)
   el.addEventListener('wheel', (e) => {
-    if (e.deltaY !== 0) {
-      e.preventDefault();
-      el.scrollLeft += e.deltaY * 0.9;
+    if (el.scrollWidth > el.clientWidth && e.deltaY !== 0) {
+      const canScrollLeft = el.scrollLeft > 0 && e.deltaY < 0;
+      const canScrollRight = (el.scrollLeft + el.clientWidth < el.scrollWidth - 2) && e.deltaY > 0;
+      if (canScrollLeft || canScrollRight) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY * 0.9;
+      }
     }
   }, { passive: false });
 
