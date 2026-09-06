@@ -765,7 +765,7 @@
             </div>
 
             <!-- Ветка и путь к файлу -->
-            <div class="github-inputs-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+            <div class="github-inputs-row">
               <div class="form-group">
                 <label for="ghBranchInput" class="form-label">Ветка:</label>
                 <input type="text" id="ghBranchInput" class="form-input" value="main" placeholder="main">
@@ -807,19 +807,19 @@
           </div>
 
           <!-- Действия с локальным файлом -->
-          <div class="disk-actions-group" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <button type="button" class="btn btn-secondary" id="diskChooseFileBtn" style="justify-content: center; height: 42px;">
+          <div class="disk-actions-group">
+            <div class="disk-buttons-grid">
+              <button type="button" class="btn btn-secondary" id="diskChooseFileBtn">
                 <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4c1.png" class="apple-emoji apple-emoji-sm" alt="📁">
                 <span>Выбрать файл на диске</span>
               </button>
-              <button type="button" class="btn btn-secondary" id="diskCreateFileBtn" style="justify-content: center; height: 42px;">
+              <button type="button" class="btn btn-secondary" id="diskCreateFileBtn">
                 <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/2795.png" class="apple-emoji apple-emoji-sm" alt="➕">
                 <span>Создать новую базу</span>
               </button>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
+            <div class="disk-disconnect-row">
               <button type="button" class="btn btn-secondary btn-sm text-danger" id="diskDisconnectBtn" style="display: none;">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
                 <span>Отключить файл на диске</span>
@@ -828,17 +828,17 @@
           </div>
 
           <!-- Пояснение про File System Access API -->
-          <div class="disk-info-note" style="margin-top: 10px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px 14px;">
+          <div class="disk-info-note">
             💡 <strong>100% автономно:</strong> Работа с физическим файлом на диске через стандартный <em>File System Access API</em> (Chrome, Edge). Добавление, редактирование и удаление материалов сохраняются сразу в файл без всплывающих окон.
           </div>
         </div>
 
         <!-- БЛОК: Резервная копия и экспорт -->
-        <details class="github-instructions-details storage-backup-details" style="margin-top: 14px;">
-          <summary style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); cursor: pointer;">
+        <details class="github-instructions-details storage-backup-details">
+          <summary>
             📦 Резервная копия, экспорт и сброс
           </summary>
-          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+          <div class="storage-backup-buttons">
             <button type="button" class="btn btn-secondary btn-sm" id="storageDownloadJsonBtn">
               <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/1f4be.png" class="apple-emoji apple-emoji-sm" alt="💾">
               <span>Скачать cortex_db.json</span>
