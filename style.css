@@ -2681,17 +2681,22 @@ select.form-input:hover {
   justify-content: center;
 }
 
-/* Переключатель вкладок режимов в модальном окне базы данных */
+/* Переключатель вкладок режимов в модальном окне базы данных (Segmented Control) */
 .storage-mode-tabs {
   display: flex;
-  background: var(--bg-surface);
+  background: rgba(0, 0, 0, 0.28);
   padding: 4px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   margin-bottom: 18px;
   gap: 6px;
   width: 100%;
   box-sizing: border-box;
+}
+
+[data-theme="light"] .storage-mode-tabs {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 .storage-tab-btn {
@@ -2705,7 +2710,7 @@ select.form-input:hover {
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 0.88rem;
-  border-radius: var(--radius-full);
+  border-radius: 9px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
@@ -2714,6 +2719,15 @@ select.form-input:hover {
   padding: 0 12px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  user-select: none;
+}
+
+.storage-tab-title-desktop {
+  display: inline;
+}
+
+.storage-tab-title-mobile {
+  display: none;
 }
 
 .storage-tab-btn:hover {
@@ -2724,8 +2738,14 @@ select.form-input:hover {
 .storage-tab-btn.active {
   background: var(--accent-warm-soft);
   color: var(--accent-warm);
-  border-color: var(--border-accent);
-  box-shadow: none;
+  border-color: rgba(216, 159, 109, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .storage-tab-btn.active {
+  background: #ffffff;
+  border-color: rgba(216, 159, 109, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .storage-tab-btn svg,
@@ -2738,12 +2758,15 @@ select.form-input:hover {
   height: 7px;
   border-radius: 50%;
   background: transparent;
-  margin-left: 2px;
+  margin-left: 0;
   flex-shrink: 0;
-  transition: background 0.2s ease;
+  display: none;
+  transition: all 0.2s ease;
 }
 
 .storage-tab-status-dot.connected {
+  display: inline-block;
+  margin-left: 4px;
   background: #10b981;
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
 }
@@ -2767,8 +2790,9 @@ select.form-input:hover {
 .disk-actions-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 22px;
 }
 
 .disk-buttons-grid {
@@ -2794,14 +2818,25 @@ select.form-input:hover {
 }
 
 .disk-info-note {
-  margin-top: 14px;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.55;
-  background: var(--bg-surface);
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.58;
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .disk-info-note {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.disk-info-note strong {
+  color: var(--text-primary);
 }
 
 .storage-backup-details {
@@ -3616,9 +3651,10 @@ select.form-input:hover {
   }
 
   .storage-tab-btn {
-    font-size: 0.82rem !important;
-    padding: 0 4px !important;
-    gap: 5px !important;
+    font-size: 0.84rem !important;
+    padding: 0 8px !important;
+    gap: 6px !important;
+    border-radius: 9px !important;
   }
 
   .dropdown-container {
@@ -4141,21 +4177,30 @@ select.form-input:hover {
     display: flex !important;
     gap: 4px !important;
     padding: 4px !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 18px !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .storage-tab-title-desktop {
+    display: none !important;
+  }
+
+  .storage-tab-title-mobile {
+    display: inline !important;
   }
 
   .storage-tab-btn {
     flex: 1 1 0 !important;
     height: 42px !important;
     font-size: 0.86rem !important;
-    padding: 0 8px !important;
+    padding: 0 10px !important;
     gap: 6px !important;
     white-space: nowrap !important;
     justify-content: center !important;
     min-width: 0 !important;
-    border-radius: var(--radius-full) !important;
+    border-radius: 9px !important;
   }
 
   .storage-tab-btn span {
@@ -4167,9 +4212,15 @@ select.form-input:hover {
     gap: 10px !important;
   }
 
+  .disk-actions-group {
+    margin-top: 14px !important;
+    margin-bottom: 22px !important;
+    gap: 12px !important;
+  }
+
   .disk-buttons-grid {
     grid-template-columns: 1fr !important;
-    gap: 10px !important;
+    gap: 12px !important;
   }
 
   .disk-buttons-grid .btn {
@@ -4177,6 +4228,14 @@ select.form-input:hover {
     height: 46px !important;
     font-size: 0.92rem !important;
     justify-content: center !important;
+  }
+
+  .disk-info-note {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
+    padding: 14px 16px !important;
+    font-size: 0.84rem !important;
+    line-height: 1.55 !important;
   }
 
   .storage-backup-buttons {
@@ -4566,10 +4625,22 @@ select.form-input:hover {
   font-size: 0.89rem;
   line-height: 1.58;
   flex: 1;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .news-tldr-list li {
   margin-bottom: 8px;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .news-tldr-list li:last-child {
@@ -5039,9 +5110,23 @@ select.form-input:hover {
   }
 
   .news-tldr-list {
-    word-break: break-word !important;
+    word-break: normal !important;
     overflow-wrap: break-word !important;
     padding-left: 16px !important;
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -ms-hyphens: auto !important;
+  }
+
+  .news-tldr-list li {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+    -ms-hyphens: auto !important;
+    overflow-wrap: break-word !important;
   }
 
   .news-card-footer {
