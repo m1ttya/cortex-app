@@ -4616,7 +4616,8 @@ select.form-input:hover {
   line-height: 1.45;
   margin: 0 0 12px 0;
   letter-spacing: -0.012em;
-  text-align: left;
+  text-align: left !important;
+  text-justify: auto !important;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -4630,7 +4631,8 @@ select.form-input:hover {
   font-size: 0.91rem;
   line-height: 1.6;
   flex: 1;
-  text-align: left;
+  text-align: left !important;
+  text-justify: auto !important;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -4639,7 +4641,8 @@ select.form-input:hover {
 
 .news-tldr-list li {
   margin-bottom: 8px;
-  text-align: left;
+  text-align: left !important;
+  text-justify: auto !important;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;

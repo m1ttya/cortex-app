@@ -2248,7 +2248,7 @@ const newsManager = {
 
     // 2. Пробуем получить свежий news_digest.json
     try {
-      const res = await fetch('news_digest.json', { cache: 'no-cache' });
+      const res = await fetch(`news_digest.json?t=${Date.now()}`, { cache: 'no-cache' });
       if (res.ok) {
         const data = await res.json();
         if (data && Array.isArray(data.items)) {
@@ -2456,8 +2456,8 @@ const newsManager = {
           : `<span class="news-cat-badge">${escapeHtml(catLabel)}</span>`;
         const timeStr = formatNewsPublishTime(item.publishedAt, item.time || '');
         const tldrHtml = Array.isArray(item.tldr)
-          ? item.tldr.map(bullet => `<li>${addRussianHyphens(escapeHtml(bullet))}</li>`).join('')
-          : `<li>${addRussianHyphens(escapeHtml(item.text || ''))}</li>`;
+          ? item.tldr.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join('')
+          : `<li>${escapeHtml(item.text || '')}</li>`;
 
         const sourcesHtml = Array.isArray(item.sources)
           ? item.sources.map(src => {
@@ -2490,7 +2490,7 @@ const newsManager = {
               ${catBadgeHtml}
               <span class="news-time" title="${escapeHtml(exactTimeFormatted)}">${escapeHtml(timeStr)}</span>
             </div>
-            <h3 class="news-title">${addRussianHyphens(escapeHtml(item.title))}</h3>
+            <h3 class="news-title">${escapeHtml(item.title)}</h3>
             <ul class="news-tldr-list">
               ${tldrHtml}
             </ul>

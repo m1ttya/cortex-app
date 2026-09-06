@@ -14,6 +14,11 @@ import xml.etree.ElementTree as ET
 import email.utils
 from datetime import datetime, timezone, timedelta
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 MD_SOURCES_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_sources.md')
 SOURCES_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_sources.json')
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), '..', 'news_digest.json')
@@ -221,9 +226,12 @@ def mock_llm_summarize(raw_items):
         'telegram': 'Telegram'
     }
     
-    for idx, item in enumerate(raw_items[:12]):
+    for idx, item in enumerate(raw_items):
         cat = item.get('category', 'main')
         raw_text = item.get('text', '').strip()
+        title = item.get('title', '').strip()
+        if not title:
+            continue
         
         sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', raw_text) if len(s.strip()) > 15]
         if len(sentences) >= 2:
@@ -231,13 +239,13 @@ def mock_llm_summarize(raw_items):
         elif sentences:
             tldr = [sentences[0]]
         else:
-            tldr = [item.get('title', 'Новость')]
+            tldr = [title]
             
         digest.append({
             'id': f"digest-item-{idx+1}",
             'category': cat,
             'categoryName': categories_map.get(cat, 'Главное'),
-            'title': item.get('title', 'Новость без заголовка'),
+            'title': title,
             'tldr': tldr,
             'fullText': raw_text,
             'importance': 'high' if idx < 3 else 'normal',
@@ -423,6 +431,11 @@ def main():
     for it in existing_items:
         key = it.get('title', '').strip().lower()
         if not key or key in merged_map:
+            continue
+        # Исключаем устаревшие демонстрационные новости
+        it_id = str(it.get('id', ''))
+        sources_urls = [s.get('url', '') for s in it.get('sources', [])]
+        if it_id.startswith('digest-demo-') or any('tginfo' in u for u in sources_urls):
             continue
         # Проверяем срок давности 7 дней
         pub_str = it.get('publishedAt')
