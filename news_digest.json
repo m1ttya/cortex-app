@@ -1,10 +1,442 @@
 {
   "version": "2.2",
-  "generatedAt": "2026-09-06T11:54:26.113381+00:00",
+  "generatedAt": "2026-09-06T13:29:39.102670+00:00",
   "provider": "Mock / Demo Fallback",
-  "itemsCount": 35,
+  "itemsCount": 50,
   "retentionDays": 7,
   "items": [
+    {
+      "id": "digest-item-11",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "Во Франции спрогнозировали проигрыш центристов в президентских выборах 2027 года",
+      "tldr": [
+        "Министр-делегат по вопросам энергетики и официальный представитель правительства республики Мод Брежон отметила, что такой сценарий возможен, если представители центристских партий не договорятся о единой кандидатуре"
+      ],
+      "fullText": "Министр-делегат по вопросам энергетики и официальный представитель правительства республики Мод Брежон отметила, что такой сценарий возможен, если представители центристских партий не договорятся о единой кандидатуре",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:24:37+00:00",
+      "sources": [
+        {
+          "name": "ТАСС",
+          "url": "https://tass.ru/mezhdunarodnaya-panorama/28084951",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-1",
+      "category": "main",
+      "categoryName": "Главное",
+      "title": "В результате атаки ВСУ по рынку в Энергодаре пострадали шесть человек",
+      "tldr": [
+        "В результате удара дрона, нанесенного ВСУ по рынку в Энергодаре Запорожской области, пострадали шесть человек."
+      ],
+      "fullText": "В результате удара дрона, нанесенного ВСУ по рынку в Энергодаре Запорожской области, пострадали шесть человек.",
+      "importance": "high",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:24:29+00:00",
+      "sources": [
+        {
+          "name": "РБК",
+          "url": "https://www.rbc.ru/rbcfreenews/6a9d60f601daad01595f2117",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-16",
+      "category": "tech",
+      "categoryName": "Технологии",
+      "title": "withComponentInputBinding: уменьшаем связанность, инвертируем зависимости",
+      "tldr": [
+        "В Angular проектах часто можно увидеть использование routed-компонентов, выполняющих оркестрирующую роль для своего роута.",
+        "Они инжектят ActivatedRoute , достают из него параметры и по ним выполняют инициализацию с помощью доменных сервисов."
+      ],
+      "fullText": "В Angular проектах часто можно увидеть использование routed-компонентов, выполняющих оркестрирующую роль для своего роута. Они инжектят ActivatedRoute , достают из него параметры и по ним выполняют инициализацию с помощью доменных сервисов. Это кажется естественным и такой компонент принято считать smart container, «умным». Но действительно ли ему необходимо знать про ActivatedRoute и про конкретный сервис? В статье рассказываю, как с помощью фичи withComponentInputBinding и резолверов можно инвертировать зависимости для routed-компонентов и уменьшить их связанность. Читать далее",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:21:19+00:00",
+      "sources": [
+        {
+          "name": "Хабр",
+          "url": "https://habr.com/ru/articles/1078996/?utm_source=habrahabr&utm_medium=rss&utm_campaign=1078996",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-2",
+      "category": "main",
+      "categoryName": "Главное",
+      "title": "Глава ЦБ Эльвира Набиуллина посетила ярмарку искусства Cosmoscow",
+      "tldr": [
+        "Председатель Центробанка Эльвира Набиуллина поестила Международную ярмарку современного искусства Cosmoscow в Москве, передает корреспондент РБК."
+      ],
+      "fullText": "Председатель Центробанка Эльвира Набиуллина поестила Международную ярмарку современного искусства Cosmoscow в Москве, передает корреспондент РБК.",
+      "importance": "high",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:21:18+00:00",
+      "sources": [
+        {
+          "name": "РБК",
+          "url": "https://www.rbc.ru/rbcfreenews/6a9d645e21975c2f9b4b28e7",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-12",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "Росавиация сообщила о высокой востребованности авиаинженеров и авиадиспетчеров",
+      "tldr": [
+        "По словам главы ведомства Дмитрия Ядрова, это связано, в частности, \"с фактически созданием целой отрасли по поддержанию летной годности и ремонту\" самолетов импортного производства"
+      ],
+      "fullText": "По словам главы ведомства Дмитрия Ядрова, это связано, в частности, \"с фактически созданием целой отрасли по поддержанию летной годности и ремонту\" самолетов импортного производства",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:20:58+00:00",
+      "sources": [
+        {
+          "name": "ТАСС",
+          "url": "https://tass.ru/ekonomika/28084949",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-13",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "В Совфеде назвали беспилотную авиацию доставки перспективной для ДФО",
+      "tldr": [
+        "У отдаленных территорий будет большая потребность в беспилотных грузовых летательных аппаратах, отметил зампред комитета СФ по обороне и безопасности, сенатор от Херсонской области Константин Басюк"
+      ],
+      "fullText": "У отдаленных территорий будет большая потребность в беспилотных грузовых летательных аппаратах, отметил зампред комитета СФ по обороне и безопасности, сенатор от Херсонской области Константин Басюк",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:19:44+00:00",
+      "sources": [
+        {
+          "name": "ТАСС",
+          "url": "https://tass.ru/obschestvo/28084947",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-17",
+      "category": "tech",
+      "categoryName": "Технологии",
+      "title": "Пиротерапия от выгорания, или как я стал вайбкодером",
+      "tldr": [
+        "Представляю твоему вниманию AcroTab — приложение, которое должно быть у каждого уважающего себя гитариста (у меня, например, есть).",
+        "кг/ам tl;dr: https://acrotab.org Читать далее"
+      ],
+      "fullText": "Привет, Хабр! Представляю твоему вниманию AcroTab — приложение, которое должно быть у каждого уважающего себя гитариста (у меня, например, есть). кг/ам tl;dr: https://acrotab.org Читать далее",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:17:07+00:00",
+      "sources": [
+        {
+          "name": "Хабр",
+          "url": "https://habr.com/ru/articles/1079032/?utm_source=habrahabr&utm_medium=rss&utm_campaign=1079032",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-14",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "Тарпищев: Хачанов показывает свой лучший теннис на US Open",
+      "tldr": [
+        "Россиянин вышел в четвертый круг заключительного в сезоне турнира Большого шлема"
+      ],
+      "fullText": "Россиянин вышел в четвертый круг заключительного в сезоне турнира Большого шлема",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:12:30+00:00",
+      "sources": [
+        {
+          "name": "ТАСС",
+          "url": "https://tass.ru/sport/28084945",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-18",
+      "category": "tech",
+      "categoryName": "Технологии",
+      "title": "Динозавры, ракоскорпионы, PostgreSQL и меланин: база данных по окраске ископаемых животных",
+      "tldr": [
+        "Начиная с 2010 года в научпопе мелькают заголовки вроде «Какого цвета были динозавры?».",
+        "При этом в тени часто остаются птерозавры, трилобиты, гигантские палеозойские ракоскорпионы или морские рептилии вроде ихтиозавров."
+      ],
+      "fullText": "Начиная с 2010 года в научпопе мелькают заголовки вроде «Какого цвета были динозавры?». При этом в тени часто остаются птерозавры, трилобиты, гигантские палеозойские ракоскорпионы или морские рептилии вроде ихтиозавров. Сейчас науке известно множество мезозойских и более древних животных, чей облик мы можем представить себе вплоть до деталей окраски. Я решил собрать их всех в одной базе, которая объединяла бы художественные реконструкции, фотографии окаменелостей и статьи с исследованиями каждого вида. Всех, кому интересно, как выглядели существа из прошедших эпох, и откуда мы это знаем, приглашаю к прочтению. Читать далее",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:12:08+00:00",
+      "sources": [
+        {
+          "name": "Хабр",
+          "url": "https://habr.com/ru/articles/1076912/?utm_source=habrahabr&utm_medium=rss&utm_campaign=1076912",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-3",
+      "category": "main",
+      "categoryName": "Главное",
+      "title": "Как прошел Общемосковский крестный ход. Фото и видео",
+      "tldr": [
+        "В Москве 6 сентября прошел Общемосковский крестный ход, который возглавил патриарх Московский и всея Руси Кирилл."
+      ],
+      "fullText": "В Москве 6 сентября прошел Общемосковский крестный ход, который возглавил патриарх Московский и всея Руси Кирилл.",
+      "importance": "high",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:11:00+00:00",
+      "sources": [
+        {
+          "name": "РБК",
+          "url": "https://www.rbc.ru/rbcfreenews/6a9d555421553c98a0f7390c",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-6",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "На Филиппинах задержали россиянина на яхте с просроченными документами",
+      "tldr": [
+        "На Филиппинах задержали россиянина по подозрению в нарушении миграционного и морского законодательства.",
+        "Об этом сообщила Daily Tribune."
+      ],
+      "fullText": "На Филиппинах задержали россиянина по подозрению в нарушении миграционного и морского законодательства. Об этом сообщила Daily Tribune.",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:10:25+00:00",
+      "sources": [
+        {
+          "name": "Коммерсантъ",
+          "url": "https://www.kommersant.ru/doc/8937544",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-4",
+      "category": "main",
+      "categoryName": "Главное",
+      "title": "Аутсайдер РПЛ забил два гола за три минуты и сыграл вничью с «Оренбургом»",
+      "tldr": [
+        "Матч в Оренбурге закончился со счетом 2:2.",
+        "Хозяева открыли счет, но потом дважды пропустили и смогли сравнять только в концовке."
+      ],
+      "fullText": "Матч в Оренбурге закончился со счетом 2:2. Хозяева открыли счет, но потом дважды пропустили и смогли сравнять только в концовке. Для «Оренбурга» это пятая ничья в РПЛ подряд",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:06:11+00:00",
+      "sources": [
+        {
+          "name": "РБК",
+          "url": "https://www.rbc.ru/sport/06/09/2026/6a9d53fa9a7947240d9388a1",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-7",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "Акции СЭГЗ стоимостью 6 млрд руб. арестованы по делу о мошенничестве",
+      "tldr": [
+        "Уголовное дело о предполагаемом мошенничестве на сумму более 380 млн руб.",
+        "при поставках МВД и Росгвардии радиостанций «Эрика» получило продолжение."
+      ],
+      "fullText": "Уголовное дело о предполагаемом мошенничестве на сумму более 380 млн руб. при поставках МВД и Росгвардии радиостанций «Эрика» получило продолжение. Как стало известно “Ъ”, следствие добилось ареста акций одного из крупнейших в России производителей авиационного электрооборудования — АО «Сарапульский электрогенераторный завод» (СЭГЗ) стоимостью около 6 млрд руб.",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:04:47+00:00",
+      "sources": [
+        {
+          "name": "Коммерсантъ",
+          "url": "https://www.kommersant.ru/doc/8937546",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-19",
+      "category": "tech",
+      "categoryName": "Технологии",
+      "title": "K3s на колёсах: HA-кластер для автопарка с ARM-агентами, WireGuard и офлайн-режимом",
+      "tldr": [
+        "Большинство статей про Kubernetes на границе (edge) описывают более-менее стабильную топологию: несколько узлов в одном или нескольких дата-центрах, предсказуемая сеть между ними, редкие сетевые партиции как исключение, а не норма.",
+        "У нас всё наоборот: control plane живёт в офисе/датацентре, а agent-узлы физически стоят в транспортных средствах автопарка — едут по городу, паркуются в подземных гаражах без связи, теряют VPN на десятки минут за смену."
+      ],
+      "fullText": "Большинство статей про Kubernetes на границе (edge) описывают более-менее стабильную топологию: несколько узлов в одном или нескольких дата-центрах, предсказуемая сеть между ними, редкие сетевые партиции как исключение, а не норма. У нас всё наоборот: control plane живёт в офисе/датацентре, а agent-узлы физически стоят в транспортных средствах автопарка — едут по городу, паркуются в подземных гаражах без связи, теряют VPN на десятки минут за смену. Разрыв связи с control plane — это не инцидент, это штатный режим работы системы, который нужно было спроектировать с самого начала, а не «подкрутить» постфактум. В этой статье — то, как устроен наш K3s-кластер для автопарка: HA control plane на kube-vip, транспорт через WireGuard поверх MikroTik, разнородный флот из amd64- и ARM-агентов (включая Jetson), и отдельно — самая интересная часть: как мы подступаемся к вопросу «может ли под на границе продолжать работать, когда control plane временно недостижим». Читать далее",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:04:05+00:00",
+      "sources": [
+        {
+          "name": "Хабр",
+          "url": "https://habr.com/ru/articles/1079024/?utm_source=habrahabr&utm_medium=rss&utm_campaign=1079024",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-8",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "Под Владимиром запустили компенсационные автобусы после ДТП с электричкой",
+      "tldr": [
+        "После столкновения во Владимирской области грузовика и электрички сообщением Александров-1 — Орехово-Зуево был запущен маршрут компенсационных автобусов.",
+        "Об этом сообщили в пресс-службе Московской железной дороги."
+      ],
+      "fullText": "После столкновения во Владимирской области грузовика и электрички сообщением Александров-1 — Орехово-Зуево был запущен маршрут компенсационных автобусов. Об этом сообщили в пресс-службе Московской железной дороги.",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:04:04+00:00",
+      "sources": [
+        {
+          "name": "Коммерсантъ",
+          "url": "https://www.kommersant.ru/doc/8937547",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-5",
+      "category": "main",
+      "categoryName": "Главное",
+      "title": "В Киев вместе с Уиткоффом приехали советники Германии, Франции и Британии",
+      "tldr": [
+        "Уиткофф и Кушнер прибыли в Киев после визита в Москву, где они встречались с Путиным"
+      ],
+      "fullText": "Уиткофф и Кушнер прибыли в Киев после визита в Москву, где они встречались с Путиным",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:03:45+00:00",
+      "sources": [
+        {
+          "name": "РБК",
+          "url": "https://www.rbc.ru/politics/06/09/2026/6a9d60a801b058bc03894189",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-20",
+      "category": "tech",
+      "categoryName": "Технологии",
+      "title": "Всё о GEO, или как продвигать бренд в нейросетях",
+      "tldr": [
+        "Нейросети радикально повлияли на то, как люди ведут себя в поисковиках.",
+        "Например, AI-блок Google Overview на 58% снижает вероятность клика пользователя на первую ссылку [ 1 ]."
+      ],
+      "fullText": "Нейросети радикально повлияли на то, как люди ведут себя в поисковиках. Например, AI-блок Google Overview на 58% снижает вероятность клика пользователя на первую ссылку [ 1 ]. А переход из рекомендации Claude и Chat GPT дает конверсию в покупку в 4,4 раз выше, чем обычный переход из поисковой выдачи [ 2 ]. При этом пересечение ссылок в топе поисковой выдачи и источников, используемых нейросетями, составляет всего 46%[ 3 ]. А значит, стандартное SEO сильно отличается от GEO. Мир меняется, и если раньше \"вас не было, если не было в интернете\", то сейчас \"вас нет, если вас не упоминают нейронки\". Давайте обсудим, как добиться того, чтобы нейросети вас рекомендовали. Читать далее",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:01:59+00:00",
+      "sources": [
+        {
+          "name": "Хабр",
+          "url": "https://habr.com/ru/articles/1079022/?utm_source=habrahabr&utm_medium=rss&utm_campaign=1079022",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-15",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "ТАСС: в Москве при столкновении двух машин пострадали пять человек",
+      "tldr": [
+        "Среди них нет несовершеннолетних"
+      ],
+      "fullText": "Среди них нет несовершеннолетних",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T13:01:47+00:00",
+      "sources": [
+        {
+          "name": "ТАСС",
+          "url": "https://tass.ru/proisshestviya/28084911",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-9",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "Jaguar Land Rover сократит до 4 тыс. сотрудников",
+      "tldr": [
+        "Автопроизводитель Jaguar Land Rover (JLR; принадлежит индийской Tata Group) запускает программу сокращения штата для офисных работников и менеджеров, сообщает BBC.",
+        "Руководство компании подтвердило сокращение, но официально не уточнило масштабы."
+      ],
+      "fullText": "Автопроизводитель Jaguar Land Rover (JLR; принадлежит индийской Tata Group) запускает программу сокращения штата для офисных работников и менеджеров, сообщает BBC. Руководство компании подтвердило сокращение, но официально не уточнило масштабы.",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T12:45:38+00:00",
+      "sources": [
+        {
+          "name": "Коммерсантъ",
+          "url": "https://www.kommersant.ru/doc/8937522",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-10",
+      "category": "russia",
+      "categoryName": "Россия",
+      "title": "МВД: на крестный ход с мощами Дмитрия Донского в Москве вышли 100 тысяч человек",
+      "tldr": [
+        "В крестном ходу с мощами князя Дмитрия Донского в Москве приняли участие около 100 тыс.",
+        "Об этом сообщила официальный представитель МВД России Ирина Волк в Telegram."
+      ],
+      "fullText": "В крестном ходу с мощами князя Дмитрия Донского в Москве приняли участие около 100 тыс. человек. Об этом сообщила официальный представитель МВД России Ирина Волк в Telegram.",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T12:37:14+00:00",
+      "sources": [
+        {
+          "name": "Коммерсантъ",
+          "url": "https://www.kommersant.ru/doc/8937535",
+          "type": "rss"
+        }
+      ]
+    },
+    {
+      "id": "digest-item-35",
+      "category": "main",
+      "categoryName": "Главное",
+      "title": "Белки покусали больше 500 россиян за год",
+      "tldr": [
+        "Наглые зверьки забираются на руки и плечи, а чтобы урвать гостинец готовы и укусить — любители подкармливать живность вынуждены проверяться у врачей и ставить прививки от бешенства.",
+        "В Москве зафиксировали больше 100 обращений к врачам, в Петербурге около 100 человек, в Новосибирской области — 97, в Красноярске — 34, на Ставрополье — больше 200."
+      ],
+      "fullText": "Наглые зверьки забираются на руки и плечи, а чтобы урвать гостинец готовы и укусить — любители подкармливать живность вынуждены проверяться у врачей и ставить прививки от бешенства. В Москве зафиксировали больше 100 обращений к врачам, в Петербурге около 100 человек, в Новосибирской области — 97, в Красноярске — 34, на Ставрополье — больше 200. Среди пострадавших в Омске были дети. Сейчас в России 5,2 млн белок, в некоторых регионах популяция активно растет — поэтому шансов встретить зверя у людей больше. Чаще всего хвостатые нападают во время кормёжки. Люди приучают белок подходить близко, прыгать на руки и плечи — но за вкусняшку те могут внезапно цапнуть. Главная опасность — белки переносят паразитов, блох и клещей и могут заразить бешенством. Особенно осторожно нужно вести себя со зверьками, которые не убегают или кидаются на людей. Так что кормить белку с руки — так себе идея. Если вас всё-таки цапнули, рану нужно промыть и гнать к врачу. ❗ Не грузятся фото и видео? Читайте нас в MAX",
+      "importance": "normal",
+      "time": "Свежее",
+      "publishedAt": "2026-09-06T12:09:16+00:00",
+      "sources": [
+        {
+          "name": "Mash",
+          "url": "https://t.me/mash/77578",
+          "type": "telegram"
+        }
+      ]
+    },
     {
       "id": "digest-item-11",
       "category": "russia",
@@ -355,7 +787,7 @@
       ]
     },
     {
-      "id": "digest-item-35",
+      "id": "digest-item-34",
       "category": "main",
       "categoryName": "Главное",
       "title": "Около 20 тысяч человек собралось на Крестный ход в Москве",
@@ -363,7 +795,7 @@
         "Тысячи верующих начали шествие от Храма Христа Спасителя до Новодевичьего монастыря.",
         "Ход приурочен ко дню празднования Собора Московских святых."
       ],
-      "fullText": "Тысячи верующих начали шествие от Храма Христа Спасителя до Новодевичьего монастыря. Ход приурочен ко дню празднования Собора Московских святых. Шествие возглавляет патриарх Кирилл. Во главе проносят чудотворный список Смоленской иконы Божией Матери \"Одигитрия\" и мощи святого князя Дмитрия Донского. На пересечении Фрунзенской набережной и Хамовнического Вала духовенство совершает молебен перед святынями, а у стен Новодевичьего монастыря читаются акафисты. ❗ Не грузятся фото и видео? Читайте нас в MAX",
+      "fullText": "Тысячи верующих начали шествие от Храма Христа Спасителя до Новодевичьего монастыря. Ход приурочен ко дню празднования Собора Московских святых. Шествие возглавляет патриарх Кирилл. Во главе проносят чудотворный список Смоленской иконы Божией Матери \"Одигитрия\" и мощи святого князя Дмитрия Донского. На пересечении Фрунзенской набережной и Хамовнического Вала духовенство совершает молебен перед святынями, а у стен Новодевичьего монастыря читаются акафисты. UPD. Количество участников хода увеличилось до 100 тысяч. ❗ Не грузятся фото и видео? Читайте нас в MAX",
       "importance": "normal",
       "time": "Свежее",
       "publishedAt": "2026-09-06T11:15:32+00:00",
@@ -397,7 +829,7 @@
       ]
     },
     {
-      "id": "digest-item-34",
+      "id": "digest-item-33",
       "category": "main",
       "categoryName": "Главное",
       "title": "Новый вокзал Серп и Молот на МЦД-4 открыли в Москве",
@@ -460,7 +892,7 @@
       ]
     },
     {
-      "id": "digest-item-33",
+      "id": "digest-item-32",
       "category": "main",
       "categoryName": "Главное",
       "title": "Двое участников пострадали во время военно-исторического фестиваля \"Русское царство\" в Московской области",
@@ -502,7 +934,7 @@
       ]
     },
     {
-      "id": "digest-item-32",
+      "id": "digest-item-31",
       "category": "main",
       "categoryName": "Главное",
       "title": "Настя Каменских впала в депрессию на фоне скандала вокруг русского языка и отмены на Украине — певица поставила карьеру на паузу",
@@ -603,132 +1035,6 @@
           "name": "3DNews",
           "url": "https://3dnews.ru/1148043",
           "type": "rss"
-        }
-      ]
-    },
-    {
-      "id": "digest-item-25",
-      "category": "tech",
-      "categoryName": "Технологии",
-      "title": "Боевик Samson от создателя Just Cause выйдет на консолях до конца сентября после провального релиза на ПК",
-      "tldr": [
-        "Разработчики из независимой студии Liquid Swords определились с датой выхода своего криминального экшена Samson на консолях.",
-        "По такому случаю был представлен трейлер с драками, поездками на авто и долгими прогулками по грязным улицам."
-      ],
-      "fullText": "Разработчики из независимой студии Liquid Swords определились с датой выхода своего криминального экшена Samson на консолях. По такому случаю был представлен трейлер с драками, поездками на авто и долгими прогулками по грязным улицам. Источник изображения: Liquid Swords",
-      "importance": "normal",
-      "time": "Свежее",
-      "publishedAt": "2026-09-05T19:08:00+00:00",
-      "sources": [
-        {
-          "name": "3DNews",
-          "url": "https://3dnews.ru/1148038",
-          "type": "rss"
-        }
-      ]
-    },
-    {
-      "id": "digest-item-30",
-      "category": "tech",
-      "categoryName": "Технологии",
-      "title": "🏳️ Gram Wallet in Telegram is ready and is now accessible to a select group of users",
-      "tldr": [
-        "🤩 We'll be gradually rolling it out to our billion+ users over the next couple of weeks.",
-        "⚡️ Thanks to the validators who approved the smart contract that powers it, future upgrades of the wallet won't require painful migrations."
-      ],
-      "fullText": "🤩 We'll be gradually rolling it out to our billion+ users over the next couple of weeks. ⚡️ Thanks to the validators who approved the smart contract that powers it, future upgrades of the wallet won't require painful migrations. This is just one of the innovations we've built to make non-custodial wallets usable ✨",
-      "importance": "normal",
-      "time": "Свежее",
-      "publishedAt": "2026-08-31T16:30:15+00:00",
-      "sources": [
-        {
-          "name": "Durov's Channel",
-          "url": "https://t.me/durov/546",
-          "type": "telegram"
-        }
-      ]
-    },
-    {
-      "id": "digest-item-29",
-      "category": "tech",
-      "categoryName": "Технологии",
-      "title": "A high-school student just made $20,000 from a Telegram Gift",
-      "tldr": [
-        "Jonathan He , an IOI gold medalist ranked #7 in the world, sold his Algorithm Cup — an NFT we gave to the top young coders this month — for 💎 15,000 Grams .",
-        "It's a meaningful sum for someone still in school, and I suspect a small fraction of what he'll go on to build."
-      ],
-      "fullText": "Jonathan He , an IOI gold medalist ranked #7 in the world, sold his Algorithm Cup — an NFT we gave to the top young coders this month — for 💎 15,000 Grams . Happy for him. It's a meaningful sum for someone still in school, and I suspect a small fraction of what he'll go on to build. 20 years ago, $20K was enough for me to launch my first company. Within months, it had reached 1M users and raised $12M at a $60M valuation. 💸 I hope some of this year's winners put their Grams to similar use! 📈",
-      "importance": "normal",
-      "time": "Свежее",
-      "publishedAt": "2026-08-30T09:10:19+00:00",
-      "sources": [
-        {
-          "name": "Durov's Channel",
-          "url": "https://t.me/durov/545",
-          "type": "telegram"
-        }
-      ]
-    },
-    {
-      "id": "digest-item-28",
-      "category": "tech",
-      "categoryName": "Технологии",
-      "title": "🚨 Two years ago, I was detained in Paris by police for 3 days — the longest they can hold someone before charging them",
-      "tldr": [
-        "In an unprecedented move, French authorities accused the head of a major platform of crimes committed by its users.",
-        "That investigation is still ongoing, although it makes less sense with each passing year."
-      ],
-      "fullText": "In an unprecedented move, French authorities accused the head of a major platform of crimes committed by its users. That investigation is still ongoing, although it makes less sense with each passing year. Why? Because we now have extensive evidence that Telegram was neither worse than other popular platforms at moderation, nor the worst at cooperating with authorities. So why was Telegram singled out? Over the last two years, we have seen a pattern emerge in multiple countries: Telegram is quietly pressured to grant political favors — such as illegal censorship or surveillance. When we refuse, local media and “non-governmental” organizations launch orchestrated campaigns portraying Telegram as a cesspool of crime, from child pornography to terrorism. Our moderation is no worse than that of other major platforms. Yet these campaigns instill the idea that Telegram should be persecuted or restricted. Suddenly, officials start caring about crime and protecting children — but only on platforms that reject their secret political demands. Platforms that accept such deals get away with almost anything — including literally selling ads promoting child pornography. Is the French investigation against me political? It certainly fits the pattern we see elsewhere, mostly in authoritarian countries. And it definitely raises questions . In time, this investigation may itself be investigated — especially now that Macron’s war against free speech is facing pushback. This month, France’s Constitutional Council struck down his social media ban for children under 15 on freedom-of-expression grounds. In the end, freedom and truth will prevail ✊",
-      "importance": "normal",
-      "time": "Свежее",
-      "publishedAt": "2026-08-24T21:21:51+00:00",
-      "sources": [
-        {
-          "name": "Durov's Channel",
-          "url": "https://t.me/durov/544",
-          "type": "telegram"
-        }
-      ]
-    },
-    {
-      "id": "digest-item-27",
-      "category": "tech",
-      "categoryName": "Технологии",
-      "title": "💎 Telegram has applied for the .gram domain zone",
-      "tldr": [
-        "If the application is approved by ICANN, a billion Telegram users could get their own second-level domains.",
-        "🖥 For example, @durov would get durov.gram , and @monk would get monk.gram ."
-      ],
-      "fullText": "If the application is approved by ICANN, a billion Telegram users could get their own second-level domains. 🖥 For example, @durov would get durov.gram , and @monk would get monk.gram . Users would be able to set up their interactive websites hosted by Telegram — just by typing one prompt ✨",
-      "importance": "normal",
-      "time": "Свежее",
-      "publishedAt": "2026-08-18T17:37:31+00:00",
-      "sources": [
-        {
-          "name": "Durov's Channel",
-          "url": "https://t.me/durov/543",
-          "type": "telegram"
-        }
-      ]
-    },
-    {
-      "id": "digest-item-26",
-      "category": "tech",
-      "categoryName": "Технологии",
-      "title": "🏆 The International Olympiad in Informatics ( IOI ) ends today",
-      "tldr": [
-        "🇷🇺 Students from Moscow and St.",
-        "Petersburg won 2 🥇 gold and 2 🥈 silver medals — well done, Vladislav Zhiganov (#2 overall!), Maksim Kravchenko, Sergei Mukhanov and Vladimir Zvezdin!"
-      ],
-      "fullText": "🇷🇺 Students from Moscow and St. Petersburg won 2 🥇 gold and 2 🥈 silver medals — well done, Vladislav Zhiganov (#2 overall!), Maksim Kravchenko, Sergei Mukhanov and Vladimir Zvezdin! 🇺🇦 Ukraine won 3 medals: 🥇 gold for Vladyslav Khalin, and 2 🥈 silver for Illia Shevchenko and Daria Perekopska 💪 🇧🇾 Belarus took 1 🥇 gold and 1 🥈 silver, won by Kiryl Kardash and Fiodar Sashko, plus two bronze medals from their teammates. 🇰🇿 Kazakhstan did well too, winning 1 🥇 gold and 3 🥈 silver medals to finish in the top five as a team, while Maksim Tsoy came #5 overall. 🇰🇬 Kyrgyzstan picked up 2 🥈 silver and 2 🥉 bronze medals! 🤝 🇺🇿 Uzbekistan, the host country, put on a great showing: 1 🥈 silver for Jakhonali Khaydaraliyev and 3 🥉 bronze medals. 🇨🇳 The strongest results of all, though, came from China 👏 At today's award ceremony, the IOI organizers are giving the 188 Algorithm Cups 🎁 🎁 🎁 to the winners. The organizers of the sister olympiad, IOAI, are sending the 220 Intelligence Cups 🏆 🏆 🏆 to their winners remotely. These are the only digital collectibles Telegram has issued this year, so they could end up worth much more than the guaranteed $1,000 for gold. We're proud to support the brightest young programmers of our time 🧠",
-      "importance": "normal",
-      "time": "Свежее",
-      "publishedAt": "2026-08-15T13:29:20+00:00",
-      "sources": [
-        {
-          "name": "Durov's Channel",
-          "url": "https://t.me/durov/542",
-          "type": "telegram"
         }
       ]
     }
