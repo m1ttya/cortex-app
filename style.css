@@ -4615,10 +4615,8 @@ select.form-input:hover {
   color: var(--text-primary);
   line-height: 1.45;
   margin: 0 0 12px 0;
-  letter-spacing: -0.01em;
-  text-align: justify;
-  text-justify: inter-word;
-  text-align-last: left;
+  letter-spacing: -0.012em;
+  text-align: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -4629,12 +4627,10 @@ select.form-input:hover {
   margin: 0 0 16px 0;
   padding-left: 18px;
   color: var(--text-secondary);
-  font-size: 0.89rem;
-  line-height: 1.58;
+  font-size: 0.91rem;
+  line-height: 1.6;
   flex: 1;
-  text-align: justify;
-  text-justify: inter-word;
-  text-align-last: left;
+  text-align: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -4643,9 +4639,7 @@ select.form-input:hover {
 
 .news-tldr-list li {
   margin-bottom: 8px;
-  text-align: justify;
-  text-justify: inter-word;
-  text-align-last: left;
+  text-align: left;
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
@@ -5112,11 +5106,10 @@ select.form-input:hover {
   }
 
   .news-title {
-    font-size: 1rem !important;
-    line-height: 1.4 !important;
-    text-align: justify !important;
-    text-justify: inter-word !important;
-    text-align-last: left !important;
+    font-size: 1.02rem !important;
+    line-height: 1.42 !important;
+    text-align: left !important;
+    letter-spacing: -0.01em !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
     -ms-hyphens: auto !important;
@@ -5128,18 +5121,17 @@ select.form-input:hover {
     word-break: normal !important;
     overflow-wrap: break-word !important;
     padding-left: 16px !important;
-    text-align: justify !important;
-    text-justify: inter-word !important;
-    text-align-last: left !important;
+    text-align: left !important;
+    font-size: 0.88rem !important;
+    line-height: 1.58 !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
     -ms-hyphens: auto !important;
   }
 
   .news-tldr-list li {
-    text-align: justify !important;
-    text-justify: inter-word !important;
-    text-align-last: left !important;
+    text-align: left !important;
+    margin-bottom: 8px !important;
     hyphens: auto !important;
     -webkit-hyphens: auto !important;
     -ms-hyphens: auto !important;
