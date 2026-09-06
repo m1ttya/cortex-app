@@ -4467,11 +4467,72 @@ select.form-input:hover {
   border-radius: 4px;
 }
 
+.sources-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-sources-quick {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-sources-quick:hover {
+  color: var(--accent-warm);
+  border-color: var(--border-accent);
+  background: var(--accent-warm-soft);
+}
+
+.author-sources-details {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+}
+
+.author-sources-summary {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-subtle);
+  transition: var(--transition);
+}
+
+.author-sources-summary:hover {
+  color: var(--accent-warm);
+  border-color: var(--border-accent);
+}
+
+.author-summary-hint {
+  font-size: 0.72rem;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+.author-sources-body {
+  padding-top: 12px;
+}
+
 .sources-toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
@@ -4502,37 +4563,6 @@ select.form-input:hover {
 }
 
 .btn-sources-reset:hover {
-  color: var(--accent-warm);
-}
-
-.sources-llm-explainer {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--accent-warm);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  margin-bottom: 14px;
-  font-size: 0.81rem;
-  line-height: 1.55;
-  color: var(--text-secondary);
-}
-
-.sources-llm-explainer .explainer-header {
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.sources-llm-explainer .explainer-content code {
-  font-family: monospace;
-  font-size: 0.85em;
-  background: var(--bg-surface);
-  padding: 1px 4px;
-  border-radius: 3px;
-  border: 1px solid var(--border-subtle);
   color: var(--accent-warm);
 }
 

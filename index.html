@@ -864,78 +864,83 @@
       <div class="modal-header">
         <h3 class="modal-title" style="display: flex; align-items: center; gap: 9px;">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          Источники новостей
+          Выбор источников для ленты
         </h3>
         <button type="button" class="modal-close-btn" id="closeNewsSettingsModalBtn" title="Закрыть">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
-      <div class="modal-body" style="gap: 18px; line-height: 1.5; font-size: 0.92rem;">
-        <!-- Подключенные источники -->
+      <div class="modal-body" style="gap: 16px; line-height: 1.5; font-size: 0.92rem;">
+        <!-- Выбор источников для пользователя -->
         <div class="settings-section-card" style="margin-bottom: 0;">
           <div class="settings-section-header">
-            <h4>📡 Подключенные каналы и RSS-ленты</h4>
-            <span id="sourcesCountBadge" class="sources-count-badge">8 источников</span>
+            <div>
+              <h4 style="margin: 0 0 4px 0;">📡 Каналы и издания в вашей ленте</h4>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Отметьте галочками источники, которые хотите читать:</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span id="sourcesCountBadge" class="sources-count-badge">8 активных</span>
+              <div class="sources-quick-actions">
+                <button type="button" class="btn-sources-quick" id="selectAllSourcesBtn" title="Включить все источники">Все</button>
+                <button type="button" class="btn-sources-quick" id="deselectAllSourcesBtn" title="Отключить все источники">Снять</button>
+              </div>
+            </div>
           </div>
 
-          <!-- Список существующих источников -->
+          <!-- Список существующих источников для выбора пользователем -->
           <div class="sources-list-container" id="sourcesListContainer">
             <!-- Рендерится через JS -->
           </div>
 
-          <!-- Панель управления источниками: экспорт, импорт, сброс -->
-          <div class="sources-toolbar">
-            <button type="button" class="btn-sources-tool" id="exportSourcesBtn" title="Скачать список источников в файл JSON для парсера">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span>Экспорт JSON</span>
-            </button>
-            <label class="btn-sources-tool" title="Загрузить источники из файла JSON">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-              <span>Импорт</span>
-              <input type="file" id="importSourcesFileInput" accept=".json" style="display: none;">
-            </label>
-            <button type="button" class="btn-sources-tool btn-sources-reset" id="resetSourcesBtn" title="Восстановить исходные источники по умолчанию">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
-              <span>Сброс</span>
-            </button>
-          </div>
+          <!-- Скрытый блок для автора (добавление новых каналов в систему) -->
+          <details class="author-sources-details" id="authorSourcesDetails">
+            <summary class="author-sources-summary">
+              <span>⚙️ Управление источниками (для автора)</span>
+              <span class="author-summary-hint">добавить канал, экспорт JSON</span>
+            </summary>
+            <div class="author-sources-body">
+              <!-- Панель управления: экспорт, импорт, сброс -->
+              <div class="sources-toolbar">
+                <button type="button" class="btn-sources-tool" id="exportSourcesBtn" title="Скачать список источников в файл news_sources.json для парсера">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Экспорт JSON</span>
+                </button>
+                <label class="btn-sources-tool" title="Загрузить источники из файла JSON">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>Импорт</span>
+                  <input type="file" id="importSourcesFileInput" accept=".json" style="display: none;">
+                </label>
+                <button type="button" class="btn-sources-tool btn-sources-reset" id="resetSourcesBtn" title="Восстановить исходные источники по умолчанию">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+                  <span>Сброс</span>
+                </button>
+              </div>
 
-          <!-- Инфо-карточка: как источники обрабатываются LLM -->
-          <div class="sources-llm-explainer">
-            <div class="explainer-header">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-              <span>Как LLM видит и обрабатывает эти источники:</span>
+              <!-- Форма добавления нового источника -->
+              <div class="add-source-box">
+                <div class="add-source-title">Добавить Telegram-канал или RSS-ленту:</div>
+                <div class="add-source-grid">
+                  <input type="text" id="newSourceNameInput" class="form-input" placeholder="Название (напр. Мой канал)">
+                  <select id="newSourceTypeSelect" class="form-input">
+                    <option value="telegram">Telegram (@канал)</option>
+                    <option value="rss">RSS лента</option>
+                  </select>
+                  <input type="text" id="newSourceUrlInput" class="form-input span-2" placeholder="@channel, t.me/channel или https://.../rss">
+                  <select id="newSourceCategorySelect" class="form-input">
+                    <option value="main">Главное</option>
+                    <option value="russia">Россия</option>
+                    <option value="city">Город</option>
+                    <option value="world">Мир</option>
+                    <option value="tech">Технологии</option>
+                    <option value="telegram">Telegram</option>
+                  </select>
+                  <button type="button" class="btn btn-secondary btn-sm" id="addSourceSubmitBtn" style="justify-content: center;">
+                    <span>+ Добавить в систему</span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="explainer-content">
-              1. <b>Сбор публикаций:</b> скрипт-агрегатор считывает последние посты из подключенных Telegram-каналов и RSS-лент.<br>
-              2. <b>Нейросеть (LLM):</b> получает массив сырых постов, удаляет кликбейт и воду, группирует одно и то же событие из нескольких источников в единый сюжет и составляет краткую выжимку с прямыми ссылками на посты.<br>
-              3. <b>Где хранятся:</b> ваши источники сохраняются в памяти браузера, в файле базы CORTEX (синхронизируются при экспорте/GitHub) и могут быть выгружены в <code>news_sources.json</code>.
-            </div>
-          </div>
-
-          <!-- Форма добавления нового источника -->
-          <div class="add-source-box">
-            <div class="add-source-title">Добавить свой Telegram-канал или RSS-ленту:</div>
-            <div class="add-source-grid">
-              <input type="text" id="newSourceNameInput" class="form-input" placeholder="Название (напр. Мой город)">
-              <select id="newSourceTypeSelect" class="form-input">
-                <option value="telegram">Telegram (@канал)</option>
-                <option value="rss">RSS лента</option>
-              </select>
-              <input type="text" id="newSourceUrlInput" class="form-input span-2" placeholder="@канал или https://.../rss">
-              <select id="newSourceCategorySelect" class="form-input">
-                <option value="main">Главное</option>
-                <option value="russia">Россия</option>
-                <option value="city">Город</option>
-                <option value="world">Мир</option>
-                <option value="tech">Технологии</option>
-                <option value="telegram">Telegram</option>
-              </select>
-              <button type="button" class="btn btn-secondary btn-sm" id="addSourceSubmitBtn" style="justify-content: center;">
-                <span>+ Добавить</span>
-              </button>
-            </div>
-          </div>
+          </details>
         </div>
       </div>
       <div class="modal-footer news-modal-footer">

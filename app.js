@@ -11,7 +11,7 @@ const IDB_STORE = 'handles';
 const IDB_KEY = 'cortex_db_file_handle';
 const LAST_DB_INFO_KEY = 'cortex_last_db_info_v1';
 const GITHUB_CONFIG_KEY = 'cortex_github_sync_config_v1';
-const NEWS_DIGEST_KEY = 'cortex_news_digest_v4';
+const NEWS_DIGEST_KEY = 'cortex_news_digest_v5';
 const NEWS_SOURCES_KEY = 'cortex_news_sources_v1';
 const LLM_CONFIG_KEY = 'cortex_llm_config_v1';
 
@@ -2110,7 +2110,7 @@ const newsManager = {
           time: 'Свежее',
           sources: [
             { name: 'РБК', url: 'https://www.rbc.ru/rbcfreenews/6a9abdba5c85bd2adebcdc93', type: 'rss' },
-            { name: 'Коммерсантъ', url: 'https://www.kommersant.ru', type: 'rss' }
+            { name: 'Коммерсантъ', url: 'https://www.kommersant.ru/doc/6938210', type: 'rss' }
           ]
         },
         {
@@ -2125,8 +2125,8 @@ const newsManager = {
           importance: 'high',
           time: '1 час назад',
           sources: [
-            { name: 'Хабр', url: 'https://habr.com', type: 'rss' },
-            { name: 'Telegram Info', url: 'https://t.me/tginfo', type: 'telegram' }
+            { name: 'Хабр', url: 'https://habr.com/ru/articles/869408/', type: 'rss' },
+            { name: 'Telegram Info', url: 'https://t.me/tginfo/4112', type: 'telegram' }
           ]
         },
         {
@@ -2141,7 +2141,7 @@ const newsManager = {
           importance: 'medium',
           time: '2 часа назад',
           sources: [
-            { name: "Durov's Channel", url: 'https://t.me/durov', type: 'telegram' }
+            { name: "Durov's Channel", url: 'https://t.me/durov/342', type: 'telegram' }
           ]
         }
       ];
@@ -2163,6 +2163,17 @@ const newsManager = {
     if (!container) return;
 
     let items = state.newsItems || [];
+
+    // Фильтр по активным источникам пользователя (чекбоксы в модальном окне)
+    const enabledSources = new Set(
+      (state.newsSources || []).filter(s => s.enabled).map(s => s.name.trim().toLowerCase())
+    );
+    if (enabledSources.size < (state.newsSources || []).length) {
+      items = items.filter(it => {
+        if (!Array.isArray(it.sources) || it.sources.length === 0) return true;
+        return it.sources.some(s => enabledSources.has(s.name.trim().toLowerCase()));
+      });
+    }
 
     // Фильтр по выбранной категории
     if (state.activeNewsCategory && state.activeNewsCategory !== 'all') {
@@ -2390,6 +2401,29 @@ function setupNewsEvents() {
     });
   }
 
+  // Быстрое включение/отключение всех источников
+  const selectAllBtn = document.getElementById('selectAllSourcesBtn');
+  if (selectAllBtn) {
+    selectAllBtn.addEventListener('click', () => {
+      (state.newsSources || []).forEach(s => s.enabled = true);
+      newsManager.saveSources();
+      renderSourcesManager();
+      newsManager.renderNewsApp();
+      showToast('Все источники включены', 'info');
+    });
+  }
+
+  const deselectAllBtn = document.getElementById('deselectAllSourcesBtn');
+  if (deselectAllBtn) {
+    deselectAllBtn.addEventListener('click', () => {
+      (state.newsSources || []).forEach(s => s.enabled = false);
+      newsManager.saveSources();
+      renderSourcesManager();
+      newsManager.renderNewsApp();
+      showToast('Все источники отключены', 'info');
+    });
+  }
+
   // Добавление нового источника
   const addSourceBtn = document.getElementById('addSourceSubmitBtn');
   if (addSourceBtn) {
@@ -2430,9 +2464,10 @@ function setupNewsEvents() {
       state.newsSources.push(newSrc);
       newsManager.saveSources();
       renderSourcesManager();
+      newsManager.renderNewsApp();
       if (nameIn) nameIn.value = '';
       if (urlIn) urlIn.value = '';
-      showToast(`Источник "${name}" добавлен!`, 'success');
+      showToast(`Источник "${name}" добавлен в систему!`, 'success');
     });
   }
 }
@@ -2460,6 +2495,11 @@ function renderSourcesManager() {
       : '📰';
     const isChecked = s.enabled ? 'checked' : '';
     const customBadgeHtml = isCustom ? '<span class="source-item-custom-badge">Пользовательский</span>' : '';
+    const deleteBtnHtml = isCustom
+      ? `<button type="button" class="btn-remove-source" onclick="deleteSource('${escapeHtml(s.id)}')" title="Удалить добавленный источник">
+           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+         </button>`
+      : '';
 
     return `
       <div class="source-item-row" data-source-id="${escapeHtml(s.id)}">
@@ -2474,9 +2514,7 @@ function renderSourcesManager() {
             <input type="checkbox" ${isChecked} onchange="toggleSourceEnabled('${escapeHtml(s.id)}', this.checked)">
             <span>Вкл</span>
           </label>
-          <button type="button" class="btn-remove-source" onclick="deleteSource('${escapeHtml(s.id)}')" title="Удалить источник">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          </button>
+          ${deleteBtnHtml}
         </div>
       </div>
     `;
@@ -2489,6 +2527,7 @@ function toggleSourceEnabled(sourceId, enabled) {
     s.enabled = enabled;
     newsManager.saveSources();
     renderSourcesManager();
+    newsManager.renderNewsApp();
   }
 }
 window.toggleSourceEnabled = toggleSourceEnabled;
@@ -2497,6 +2536,7 @@ function deleteSource(sourceId) {
   state.newsSources = (state.newsSources || []).filter(src => src.id !== sourceId);
   newsManager.saveSources();
   renderSourcesManager();
+  newsManager.renderNewsApp();
   showToast('Источник удален');
 }
 window.deleteSource = deleteSource;

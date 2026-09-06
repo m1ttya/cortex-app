@@ -22,17 +22,17 @@
         },
         {
           "name": "Коммерсантъ",
-          "url": "https://www.kommersant.ru",
+          "url": "https://www.kommersant.ru/doc/6938210",
           "type": "rss"
         },
         {
           "name": "ТАСС",
-          "url": "https://tass.ru",
+          "url": "https://tass.ru/ekonomika/21798321",
           "type": "rss"
         },
         {
           "name": "Ведомости",
-          "url": "https://www.vedomosti.ru",
+          "url": "https://www.vedomosti.ru/economics/news/2026/09/05/1060934-argentina-falkland",
           "type": "rss"
         }
       ]
@@ -56,7 +56,7 @@
         },
         {
           "name": "ТАСС",
-          "url": "https://tass.ru",
+          "url": "https://tass.ru/obschestvo/21804912",
           "type": "rss"
         }
       ]
@@ -75,7 +75,7 @@
       "sources": [
         {
           "name": "Хабр",
-          "url": "https://habr.com",
+          "url": "https://habr.com/ru/articles/869408/",
           "type": "rss"
         },
         {
@@ -99,7 +99,7 @@
       "sources": [
         {
           "name": "Хабр",
-          "url": "https://habr.com",
+          "url": "https://habr.com/ru/articles/868214/",
           "type": "rss"
         }
       ]
@@ -123,7 +123,7 @@
         },
         {
           "name": "РБК",
-          "url": "https://www.rbc.ru",
+          "url": "https://www.rbc.ru/economics/04/09/2026/66d819409a794719bb44fa21",
           "type": "rss"
         }
       ]
@@ -147,7 +147,7 @@
         },
         {
           "name": "ТАСС",
-          "url": "https://tass.ru",
+          "url": "https://tass.ru/sport/21789145",
           "type": "rss"
         }
       ]
@@ -166,7 +166,7 @@
       "sources": [
         {
           "name": "ТАСС",
-          "url": "https://tass.ru",
+          "url": "https://tass.ru/moskva/21801243",
           "type": "rss"
         }
       ]
@@ -185,7 +185,7 @@
       "sources": [
         {
           "name": "ТАСС",
-          "url": "https://tass.ru",
+          "url": "https://tass.ru/moskva/21799831",
           "type": "rss"
         }
       ]
@@ -204,12 +204,12 @@
       "sources": [
         {
           "name": "РБК",
-          "url": "https://www.rbc.ru",
+          "url": "https://www.rbc.ru/society/05/09/2026/66d920319a79472dc08819ef",
           "type": "rss"
         },
         {
           "name": "Коммерсантъ",
-          "url": "https://www.kommersant.ru",
+          "url": "https://www.kommersant.ru/doc/6937105",
           "type": "rss"
         }
       ]
@@ -228,7 +228,7 @@
       "sources": [
         {
           "name": "РБК",
-          "url": "https://www.rbc.ru",
+          "url": "https://www.rbc.ru/business/05/09/2026/66d934129a794738da74512a",
           "type": "rss"
         }
       ]
