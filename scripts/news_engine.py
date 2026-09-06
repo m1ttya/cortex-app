@@ -8,6 +8,7 @@ import os
 import sys
 import json
 import re
+import html
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
@@ -69,13 +70,44 @@ def parse_sources_from_markdown(filepath):
     return sources
 
 def clean_html(raw_html):
-    """Удаляет HTML теги и спецсимволы"""
+    """Удаляет HTML теги и декодирует спецсимволы/HTML-сущности"""
     if not raw_html:
         return ""
     cleanr = re.compile(r'<.*?>')
     cleantext = re.sub(cleanr, ' ', raw_html)
-    cleantext = cleantext.replace('&nbsp;', ' ').replace('&quot;', '"').replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+    cleantext = html.unescape(cleantext)
     return re.sub(r'\s+', ' ', cleantext).strip()
+
+def extract_telegram_title_and_text(raw_text):
+    """Аккуратно извлекает законченный заголовок и тело публикации без обрезания фраз"""
+    text = clean_html(raw_text)
+    if not text:
+        return "", ""
+    
+    paragraphs = [p.strip() for p in raw_text.split('\n') if p.strip()]
+    first_p = clean_html(paragraphs[0]) if paragraphs else text
+    sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', first_p) if s.strip()]
+    
+    if sentences and 20 <= len(sentences[0]) <= 130:
+        title = sentences[0]
+        rem_sentences = sentences[1:]
+        rem_p = [clean_html(p) for p in paragraphs[1:]]
+        body = ' '.join(rem_sentences + rem_p).strip() or text
+    elif len(first_p) <= 130:
+        title = first_p
+        body = '\n'.join(clean_html(p) for p in paragraphs[1:]).strip() or title
+    else:
+        # Если предложение длинное, отсекаем строго по границе слова или пунктуации
+        s = sentences[0] if sentences else first_p
+        cutoff = 105
+        match = re.search(r'[\s,;:—–-]', s[80:120])
+        if match:
+            cutoff = 80 + match.start()
+        title = s[:cutoff].strip()
+        body = text
+        
+    title = title.rstrip(' .,:;—–-')
+    return title, body
 
 def fetch_rss_items(source, max_items=5):
     """Парсинг RSS-ленты через стандартный ElementTree"""
@@ -95,7 +127,11 @@ def fetch_rss_items(source, max_items=5):
             raw_items = channel.findall('item') if channel is not None else root.findall('.//item')
             
             for it in raw_items[:max_items]:
-                title = it.findtext('title', '').strip()
+                raw_title = it.findtext('title', '').strip()
+                title = clean_html(raw_title)
+                if ' // ' in title:
+                    title = title.split(' // ')[0].strip()
+                title = title.rstrip(' .,:;—–-')
                 link = it.findtext('link', '').strip()
                 desc = clean_html(it.findtext('description', ''))
                 pub_date = it.findtext('pubDate', '').strip()
@@ -133,7 +169,7 @@ def fetch_telegram_items(source, max_posts=5):
     try:
         req = urllib.request.Request(web_url, headers=HEADERS)
         with urllib.request.urlopen(req, timeout=12) as response:
-            html = response.read().decode('utf-8', errors='ignore')
+            html_content = response.read().decode('utf-8', errors='ignore')
             
             # Извлекаем сообщения по шаблону tgme_widget_message_text
             post_pattern = re.compile(
@@ -141,18 +177,17 @@ def fetch_telegram_items(source, max_posts=5):
                 r'class="tgme_widget_message_date"[^>]*href="([^"]+)"[^>]*>.*?<time datetime="([^"]+)"',
                 re.DOTALL
             )
-            matches = post_pattern.findall(html)
+            matches = post_pattern.findall(html_content)
             
             for text_html, link, dt_str in matches[-max_posts:]:
-                text = clean_html(text_html)
-                if len(text) > 25:
-                    first_line = text.split('\n')[0][:100]
+                title, text = extract_telegram_title_and_text(text_html)
+                if len(text) > 20 and title:
                     items.append({
                         'source': name,
                         'source_type': 'telegram',
                         'category': category,
                         'url': link,
-                        'title': first_line,
+                        'title': title,
                         'text': text.strip(),
                         'date': dt_str
                     })
