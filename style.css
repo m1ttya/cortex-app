@@ -2254,7 +2254,22 @@ select.form-input:hover {
 /* GitHub Modal Footer & Dialog */
 .storage-dialog {
   width: 95%;
-  max-width: 640px !important;
+  max-width: 640px;
+}
+
+.news-settings-dialog {
+  width: 95%;
+  max-width: 640px;
+}
+
+.brave-dialog {
+  width: 95%;
+  max-width: 500px;
+}
+
+.folder-dialog {
+  width: 95%;
+  max-width: 480px;
 }
 
 .github-modal-footer {
@@ -3525,6 +3540,39 @@ select.form-input:hover {
     justify-content: center !important;
   }
 
+  /* Переключатель разделов (Второй мозг / Новости) — 100% ширины, кнопки 50/50 без обрезания бейджей */
+  .nav-section-switcher {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    box-sizing: border-box !important;
+    padding: 4px !important;
+    gap: 4px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .nav-section-btn {
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    padding: 8px 6px !important;
+    font-size: 0.84rem !important;
+    min-width: 0 !important;
+    gap: 6px !important;
+    text-align: center !important;
+  }
+
+  .nav-section-btn span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .nav-badge {
+    flex-shrink: 0 !important;
+    font-size: 0.72rem !important;
+    padding: 1px 6px !important;
+  }
+
   /* Блок быстрого захвата */
   .quick-capture-card {
     padding: 16px 14px;
@@ -3608,7 +3656,7 @@ select.form-input:hover {
     width: 100% !important;
   }
 
-  /* Панель фильтрации и поиска (двухуровневая мобильная сетка без обрезания слов) */
+  /* Панель фильтрации и поиска (полноразмерный поиск и структурированные контролы) */
   .controls-toolbar {
     gap: 8px;
     margin-bottom: 16px;
@@ -3618,7 +3666,8 @@ select.form-input:hover {
     display: grid !important;
     grid-template-columns: 1fr auto !important;
     grid-template-areas:
-      "search view"
+      "search search"
+      "folder view"
       "status status" !important;
     gap: 8px !important;
     align-items: center !important;
@@ -3631,9 +3680,14 @@ select.form-input:hover {
     min-width: 0 !important;
   }
 
+  #createFolderBtn {
+    grid-area: folder !important;
+    width: fit-content !important;
+  }
+
   .toolbar-top-row .view-switch-wrapper {
     grid-area: view !important;
-    margin-left: 0 !important;
+    margin-left: auto !important;
     flex-shrink: 0 !important;
   }
 
@@ -3885,35 +3939,139 @@ select.form-input:hover {
     width: 100%;
   }
 
-  /* Модальное окно редактирования */
-  .modal-dialog {
-    max-width: 100%;
-    margin: 10px;
-    max-height: 94vh;
-    border-radius: var(--radius-lg);
+  /* Полноэкранные модальные окна на смартфонах */
+  .modal-backdrop {
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    background: var(--bg-card-solid) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 99999 !important;
+  }
+
+  .modal-dialog,
+  .modal-dialog.storage-dialog,
+  .modal-dialog.news-settings-dialog,
+  .modal-dialog.welcome-dialog,
+  .modal-dialog.brave-dialog,
+  .modal-dialog.folder-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100% !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: var(--bg-card-solid) !important;
   }
 
   .modal-header {
-    padding: 16px 18px;
+    padding: 14px 18px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    background: var(--bg-card-solid) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .modal-header h2,
+  .modal-header h3,
+  .modal-title {
+    font-size: 1.15rem !important;
   }
 
   .modal-body {
-    padding: 16px 18px;
-    gap: 14px;
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 18px 18px 24px !important;
+    gap: 16px !important;
+    max-height: none !important;
   }
 
   .form-row {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 
   .modal-footer {
-    padding: 14px 18px;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 50 !important;
+    background: var(--bg-card-solid) !important;
+    border-top: 1px solid var(--border-subtle) !important;
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .modal-footer .btn {
-    flex: 1;
-    justify-content: center;
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    height: 42px !important;
+    font-size: 0.88rem !important;
+  }
+
+  /* Вкладки выбора хранилища базы данных */
+  .storage-mode-tabs {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    padding: 4px !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .storage-tab-btn {
+    height: 42px !important;
+    font-size: 0.88rem !important;
+    padding: 0 8px !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
+
+  .storage-tab-btn span {
+    white-space: nowrap !important;
+  }
+
+  /* Подвал действий базы данных */
+  .github-modal-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 50 !important;
+    background: var(--bg-card-solid) !important;
+  }
+
+  .storage-auto-save-badge {
+    justify-content: center !important;
+    font-size: 0.82rem !important;
+  }
+
+  .github-footer-actions {
+    display: flex !important;
+    width: 100% !important;
+    gap: 8px !important;
+    margin-left: 0 !important;
+  }
+
+  .github-footer-actions .btn {
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    height: 42px !important;
+    font-size: 0.88rem !important;
   }
 
   /* Всплывающие уведомления на мобильных (вверху экрана, чтобы не перекрывать кнопки модалок) */
@@ -4671,18 +4829,27 @@ select.form-input:hover {
   }
 
   .news-action-buttons {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 8px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .news-sync-status {
+    width: 100% !important;
+    justify-content: center !important;
+    order: -1 !important;
+    padding: 6px 12px !important;
+    font-size: 0.78rem !important;
+    box-sizing: border-box !important;
   }
 
   .news-action-buttons .btn {
-    flex: 1;
-    justify-content: center;
-    height: 38px;
-    font-size: 0.82rem;
-    padding: 0 10px;
+    flex: 1 1 0 !important;
+    justify-content: center !important;
+    height: 38px !important;
+    font-size: 0.82rem !important;
+    padding: 0 10px !important;
   }
 
   .btn-text-desktop {
