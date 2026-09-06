@@ -2071,27 +2071,36 @@ function formatNewsPublishTime(publishedAt, fallbackStr = '') {
  * Форматирует относительное время последнего сбора сводки системой CORTEX
  */
 function formatRelativeSyncTime(isoString) {
-  if (!isoString) return 'Обновлено недавно';
-  const syncDate = new Date(isoString);
-  if (isNaN(syncDate.getTime())) return 'Обновлено недавно';
+  let desktopText = 'Обновлено недавно';
+  let mobileText = 'Недавно';
 
-  const now = new Date();
-  const diffMs = Math.max(0, now.getTime() - syncDate.getTime());
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHour = Math.floor(diffMin / 60);
+  if (isoString) {
+    const syncDate = new Date(isoString);
+    if (!isNaN(syncDate.getTime())) {
+      const now = new Date();
+      const diffMs = Math.max(0, now.getTime() - syncDate.getTime());
+      const diffSec = Math.floor(diffMs / 1000);
+      const diffMin = Math.floor(diffSec / 60);
+      const diffHour = Math.floor(diffMin / 60);
 
-  if (diffMin < 1) {
-    return 'Обновлено только что';
+      if (diffMin < 1) {
+        desktopText = 'Обновлено только что';
+        mobileText = 'Только что';
+      } else if (diffMin < 60) {
+        desktopText = `Обновлено ${diffMin} ${ruPlural(diffMin, 'минуту', 'минуты', 'минут')} назад`;
+        mobileText = `${diffMin} мин назад`;
+      } else if (diffHour < 24) {
+        desktopText = `Обновлено ${diffHour} ${ruPlural(diffHour, 'час', 'часа', 'часов')} назад`;
+        mobileText = `${diffHour} ч назад`;
+      } else {
+        const diffDays = Math.floor(diffHour / 24);
+        desktopText = `Обновлено ${diffDays} ${ruPlural(diffDays, 'день', 'дня', 'дней')} назад`;
+        mobileText = `${diffDays} дн назад`;
+      }
+    }
   }
-  if (diffMin < 60) {
-    return `Обновлено ${diffMin} ${ruPlural(diffMin, 'минуту', 'минуты', 'минут')} назад`;
-  }
-  if (diffHour < 24) {
-    return `Обновлено ${diffHour} ${ruPlural(diffHour, 'час', 'часа', 'часов')} назад`;
-  }
-  const diffDays = Math.floor(diffHour / 24);
-  return `Обновлено ${diffDays} ${ruPlural(diffDays, 'день', 'дня', 'дней')} назад`;
+
+  return `<span class="sync-text-desktop">${escapeHtml(desktopText)}</span><span class="sync-text-mobile">${escapeHtml(mobileText)}</span>`;
 }
 
 function getDayGroupInfo(publishedAt) {
@@ -2336,11 +2345,11 @@ const newsManager = {
     if (!syncText) return;
 
     if (!state.newsGeneratedAt) {
-      syncText.textContent = 'Обновлено недавно';
+      syncText.innerHTML = '<span class="sync-text-desktop">Обновлено недавно</span><span class="sync-text-mobile">Недавно</span>';
       return;
     }
 
-    syncText.textContent = formatRelativeSyncTime(state.newsGeneratedAt);
+    syncText.innerHTML = formatRelativeSyncTime(state.newsGeneratedAt);
 
     const genDate = new Date(state.newsGeneratedAt);
     if (!isNaN(genDate.getTime()) && syncStatus) {
@@ -2933,6 +2942,7 @@ function setupEventListeners() {
   enableSmoothHorizontalScroll(document.getElementById('typeFilterPills'));
   enableSmoothHorizontalScroll(document.getElementById('statusFilterPills'));
   enableSmoothHorizontalScroll(document.getElementById('captureTagsChips'));
+  enableSmoothHorizontalScroll(document.getElementById('captureTypeGroup'));
 
   // Слушатели для Virtual Scrolling (высокопроизводительный виртуальный список)
   window.addEventListener('scroll', onVirtualScrollWindow, { passive: true });

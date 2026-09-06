@@ -478,6 +478,14 @@ body {
   white-space: nowrap;
 }
 
+.metric-label-desktop {
+  display: inline;
+}
+
+.metric-label-mobile {
+  display: none;
+}
+
 .metric-value {
   font-family: var(--font-sans);
   font-size: 1.05rem;
@@ -3415,12 +3423,20 @@ select.form-input:hover {
   }
 
   /* Панель метрик — единая аккуратная горизонтальная полоса без переносов */
+  .metric-label-desktop {
+    display: none !important;
+  }
+
+  .metric-label-mobile {
+    display: inline !important;
+  }
+
   .metrics-bar {
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 8px 4px 11px !important;
+    padding: 9px 4px 12px !important;
     background: var(--bg-surface) !important;
     border-radius: var(--radius-md) !important;
     border: 1px solid var(--border-subtle) !important;
@@ -3444,25 +3460,25 @@ select.form-input:hover {
     flex: 1 1 0 !important;
     min-width: 0 !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0 1px !important;
     text-align: center !important;
   }
 
   .metrics-bar .metric-label {
-    font-size: 0.60rem !important;
+    font-size: 0.64rem !important;
     color: var(--text-muted) !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.01em !important;
+    letter-spacing: 0.02em !important;
     white-space: nowrap !important;
-    line-height: 1 !important;
+    line-height: 1.1 !important;
   }
 
   .metrics-bar .metric-value,
   .metrics-bar .progress-percent {
-    font-size: 0.98rem !important;
+    font-size: 1.02rem !important;
     font-weight: 700 !important;
-    line-height: 1.1 !important;
+    line-height: 1.15 !important;
     min-width: unset !important;
   }
 
@@ -3593,11 +3609,23 @@ select.form-input:hover {
     gap: 8px;
   }
 
-  /* Форматы в быстром захвате — идеальные равные сегменты по 25% */
+  /* Форматы в быстром захвате — удобные просторные кнопки с гарантированным отступом */
   #captureTypeGroup {
     width: 100% !important;
     display: flex !important;
-    overflow-x: visible !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    background: var(--bg-surface) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 3px !important;
+    gap: 6px !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 40px !important;
   }
 
   #captureTypeGroup::-webkit-scrollbar {
@@ -3605,11 +3633,23 @@ select.form-input:hover {
   }
 
   #captureTypeGroup .segment-btn {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
+    flex: 1 0 auto !important;
+    min-width: fit-content !important;
     justify-content: center !important;
-    padding: 0 4px !important;
-    font-size: 0.76rem !important;
+    padding: 6px 11px !important;
+    gap: 5px !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    height: 32px !important;
+    border-radius: var(--radius-sm) !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  #captureTypeGroup .segment-btn .apple-emoji {
+    width: 1.05em !important;
+    height: 1.05em !important;
+    vertical-align: -0.14em !important;
   }
 
   .select-wrapper {
@@ -4254,6 +4294,14 @@ select.form-input:hover {
   user-select: none;
   white-space: nowrap;
   transition: var(--transition);
+}
+
+.sync-text-desktop {
+  display: inline;
+}
+
+.sync-text-mobile {
+  display: none;
 }
 
 .news-sync-status:hover {
@@ -4943,32 +4991,45 @@ select.form-input:hover {
   }
 
   /* Разделение кнопки источников и статуса обновления */
+  .sync-text-desktop {
+    display: none !important;
+  }
+
+  .sync-text-mobile {
+    display: inline !important;
+  }
+
   .news-action-buttons {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    gap: 10px !important;
+    gap: 8px !important;
     flex-wrap: nowrap !important;
+    box-sizing: border-box !important;
   }
 
   .news-action-buttons #newsSettingsBtn {
     flex: 0 0 auto !important;
-    height: 36px !important;
-    padding: 0 14px !important;
-    font-size: 0.82rem !important;
+    height: 34px !important;
+    padding: 0 12px !important;
+    font-size: 0.8rem !important;
     border-radius: var(--radius-full) !important;
   }
 
   .news-sync-status {
     flex: 0 0 auto !important;
     width: auto !important;
+    max-width: calc(100% - 110px) !important;
     margin-left: auto !important;
     order: 2 !important;
-    height: 34px !important;
-    padding: 0 12px !important;
-    font-size: 0.76rem !important;
+    height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 0.74rem !important;
     box-sizing: border-box !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .news-info-pill {

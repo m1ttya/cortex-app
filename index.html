@@ -36,27 +36,42 @@
       <!-- Виджет общей статистики -->
       <div class="metrics-bar" id="metricsBar">
         <div class="metric-item" title="Всего добавленных материалов">
-          <span class="metric-label">Всего:</span>
+          <span class="metric-label">
+            <span class="metric-label-desktop">Всего:</span>
+            <span class="metric-label-mobile">Всего</span>
+          </span>
           <span class="metric-value" id="statTotal">0</span>
         </div>
         <div class="metric-divider"></div>
         <div class="metric-item highlight-planned" title="В очереди / еще не начато">
-          <span class="metric-label">В планах:</span>
+          <span class="metric-label">
+            <span class="metric-label-desktop">В планах:</span>
+            <span class="metric-label-mobile">План</span>
+          </span>
           <span class="metric-value" id="statPlanned">0</span>
         </div>
         <div class="metric-divider"></div>
         <div class="metric-item highlight-progress" title="В процессе / изучается прямо сейчас">
-          <span class="metric-label">В процессе:</span>
+          <span class="metric-label">
+            <span class="metric-label-desktop">В процессе:</span>
+            <span class="metric-label-mobile">В работе</span>
+          </span>
           <span class="metric-value" id="statProgress">0</span>
         </div>
         <div class="metric-divider"></div>
         <div class="metric-item highlight-done" title="Полностью изучено или сделано">
-          <span class="metric-label">Готово:</span>
+          <span class="metric-label">
+            <span class="metric-label-desktop">Готово:</span>
+            <span class="metric-label-mobile">Готово</span>
+          </span>
           <span class="metric-value" id="statDone">0</span>
         </div>
         <div class="metric-divider"></div>
         <div class="metric-progress-wrapper highlight-progress-total" title="Общий процент завершения">
-          <span class="metric-label">Прогресс:</span>
+          <span class="metric-label">
+            <span class="metric-label-desktop">Прогресс:</span>
+            <span class="metric-label-mobile">Итог</span>
+          </span>
           <span class="metric-value progress-percent" id="statPercent">0%</span>
           <div class="progress-track">
             <div class="progress-fill" id="statProgressBar" style="width: 0%"></div>
@@ -429,7 +444,7 @@
           </button>
           <div class="news-sync-status" id="newsSyncStatus" title="Время последнего сбора и обработки сводки">
             <span class="news-sync-dot"></span>
-            <span id="newsSyncTimeText">Обновлено недавно</span>
+            <span id="newsSyncTimeText"><span class="sync-text-desktop">Обновлено недавно</span><span class="sync-text-mobile">Недавно</span></span>
           </div>
         </div>
       </div>
